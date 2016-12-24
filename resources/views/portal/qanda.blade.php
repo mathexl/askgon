@@ -1,7 +1,46 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-@section('content')
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.js"></script>
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Styles -->
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <!-- Scripts -->
+
+    <script>
+        window.Laravel = <?php echo json_encode(['csrfToken' => csrf_token(),]); ?>
+    </script>
+</head>
+<body>
+
+<header style="background:white;position:relative;border-bottom:1px #DDD solid;">
+  <a href="/"><img src="/askgon_black.png"></a>
+  <div class="rightlinks">
+    @if(!Auth::user())
+    <a href="/register">Sign Up</a>
+    <a href="/login">Login</a>
+    @else
+    <a href="/logout">Logout</a>
+    <a href="/home">My Dashboard</a>
+    @endif
+  </div>
+</header>
+
+
 <style>
+
 header{
 background: -moz-linear-gradient(-45deg, #444 0%, #444 99%); /* FF3.6-15 */
 background: -webkit-linear-gradient(-45deg, #444 0%,#444 99%); /* Chrome10-25,Safari5.1-6 */
@@ -13,6 +52,9 @@ footer{
 }
 .loading{
   display:none;
+}
+.rightlinks > a{
+  color:black !important;
 }
 </style>
 <section name="qanda" id="qanda">
@@ -37,7 +79,7 @@ footer{
         {!! csrf_field() !!}
         <input placeholder="Title of Post" name="title">
         <textarea placeholder="Title of Post" name="content"></textarea>
-        <div class="result"></div>
+        <div class="result" style="display:none;"></div>
         <div class="row">
         <input type="checkbox" name="question" id="question" value="true"><label for="question" style="margin-top: 8px;
     float: left;"> This is a Question</label>
@@ -97,7 +139,7 @@ footer{
               <form>
                 {!! csrf_field() !!}
                 <textarea placeholder="Title of Post" name="content" v-model="answer.response" class="answer_content"></textarea>
-                <div class="result answer_popup"></div>
+                <div class="result answer_popup" style="display:none;"></div>
               </form>
 
             </div>
@@ -414,4 +456,7 @@ var tours = new Vue({
   }
 });
 </script>
-@endsection
+<!-- Scripts -->
+<script src="/js/app.js"></script>
+</body>
+</html>

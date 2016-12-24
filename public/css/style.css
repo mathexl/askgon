@@ -383,7 +383,7 @@ section[name="qanda"] > .main > .pane{
   position:absolute;
   top:0px;
   left:0px;
-  height:calc(100vh - 120px);
+  height:calc(100vh - 50px);
   background-color:white;
   z-index:100;
 }
@@ -571,6 +571,7 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
     top:120px;
     left:0px;
     z-index:100;
+    
   }
   section[name="qanda"] > .questions > .mainbar{
     width:100%;

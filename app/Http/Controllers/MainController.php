@@ -56,8 +56,9 @@ class MainController extends Controller
         $post->content = $request->content;
         $post->owner = $user->id;
         $post->section = $section->id;
+        $post->solved = false;
         $post->save();
-        return redirect("/portal/class/" . $section->id . "/qanda");
+        return redirect("/class/" . $section->id . "");
       }
       return view("404");
     }

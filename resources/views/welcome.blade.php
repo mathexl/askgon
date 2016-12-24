@@ -36,6 +36,12 @@ section[name="main"] > h2{
   text-align: center;
 }
 
+section[name="main"] > h2 + img{
+width: 60%;
+margin-left: 20%;
+border-radius: 5px;
+}
+
 section[name="main"] > h3{
   width:70%;
   left:15%;
@@ -92,7 +98,7 @@ section[name="infobar"] > .triad > i{
   margin-left:10%;
   margin-right:10%;
   font-size:36px;
-  color:#52AEFB;
+  color:#52BEFB;
   text-align: center;
 }
 section[name="infobar"] > .triad > h1{
@@ -100,7 +106,7 @@ section[name="infobar"] > .triad > h1{
   margin-left:10%;
   margin-right:10%;
   font-size:16px;
-  color:#52AEFB;
+  color:#52BEFB;
   text-align: center;
   font-family: "Lato", Arial, Tahoma;
 }
@@ -152,6 +158,7 @@ header > .rightlinks > a{
   <section name="main">
     <h1>Q and A for your classroom</h1>
     <h2>An online q and a platform for your classroom, free and open sourced</h2>
+    <img src="/sshot.png">
     <h3>a project by <img src="parsegon.png"></h3>
   </section>
   <section name="infobar">
