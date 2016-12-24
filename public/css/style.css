@@ -1,0 +1,588 @@
+
+ header{
+   width:100%;
+   position:absolute;
+   top:0px;
+   left:0px;
+   z-index:100;
+   height:50px;
+ }
+ header.colored {
+   background: -moz-linear-gradient(-45deg, #52AEFB 0%, #52DEFB 99%); /* FF3.6-15 */
+ background: -webkit-linear-gradient(-45deg, #52AEFB 0%,#52DEFB 99%); /* Chrome10-25,Safari5.1-6 */
+ background: linear-gradient(135deg, #52AEFB 0%,#52DEFB 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#52AEFB', endColorstr='#52DEFB',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+ position:relative;
+
+ }
+ header > a > img{
+   height:30px;
+   margin-top:10px;
+   margin-left:10px;
+ }
+
+
+ header > .rightlinks{
+   float:right;
+   width:50%;
+   padding-right:20px;
+}
+
+header > .rightlinks > a{
+  height:30px;
+  margin-top:10px;
+  margin-right:10px;
+  box-sizing: border-box;
+  padding-top:3px;
+  color:white;
+  float:right;
+  font-family: "Lato", Arial, Tahoma;
+  font-size:14px;
+}
+
+.newclass{
+  float: right;
+padding: 5px 10px;
+background-color: #52AEFB;
+color: white;
+border-radius: 5px;
+margin: -4px;
+font-size: 13px;
+display: inline-block;
+}
+
+.classblock{
+  width: 30%;
+  margin: 1.5%;
+  box-sizing: border-box;
+  border:1px #444 dotted;
+  border-radius:10px;
+  cursor:pointer;
+  float:left;
+  display: inline-block;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+.classblock > h1{
+  width:100%;
+  padding-left:10px;
+  box-sizing: border-box;
+  font-size:18px;
+  margin-top:4px;
+  margin-bottom: 4px;
+}
+
+.classblock > h2{
+  width:100%;
+  padding-left:10px;
+  box-sizing: border-box;
+  font-size:14px;
+  margin-top:4px;
+  margin-bottom: 4px;
+}
+
+
+
+
+section[name="qanda"]{
+  width:100%;
+  height:calc(100vh - 60px);
+  display:inline-block;
+  font-family: 'Raleway','Lato','Mukta Vaani';
+}
+
+section[name="qanda"] .correct{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 12px;
+    border: 2px #ddd solid;
+    padding: 2px;
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 4px;
+    color: #bbb;
+    cursor:pointer;
+}
+
+.correct.chosen{
+  color:#CAE19B !important;
+  border-color:#CAE19B !important;
+}
+
+section[name="qanda"] > .questions{
+  width:25%;
+  height:calc(100vh - 50px);
+  display:inline-block;
+  border-right:1px #ddd solid;
+  box-sizing: border-box;
+  overflow:scroll;
+  float:left;
+
+
+}
+
+section[name="qanda"] > .questions > .mainbar{
+  width:100%;
+  height:auto;
+  border-bottom: 1px #ddd solid;
+  box-sizing: border-box;
+  padding:3px;
+  display:inline-block;
+  float:left;
+  padding-bottom:5px;
+}
+
+section[name="qanda"] > .questions > .mainbar > .button{
+  padding:2px;
+  border:1px #ddd solid;
+  border-radius:3px;
+  float:right;
+  margin-right:4px;
+  padding-left:4px;
+  padding-right:4px;
+  font-size:12px;
+  color:#bbb;
+  cursor:pointer;
+}
+
+section[name="qanda"] > .questions > .mainbar > .button:hover{
+  opacity:.8;
+}
+
+section[name="qanda"] > .questions > .mainbar > .button.chosen{
+  background-color:black;
+  color:white;
+  border-color:black;
+}
+
+section[name="qanda"] > .questions > .mainbar > .button.chosen:hover{
+  opacity:1;
+}
+
+section[name="qanda"] .question{
+  width:100%;
+  height:auto;
+  border-bottom: 1px #ddd solid;
+  cursor:pointer;
+  display:inline-block;
+  line-height:18px;
+  float:left;
+
+}
+
+section[name="qanda"] .question.chosen{
+  background-color:#222;
+}
+
+section[name="qanda"] .question > h1{
+  font-size:18px;
+  font-weight:300;
+  font-family:#bbb;
+  margin-top:6px;
+  margin-bottom:1px;
+  padding-left:12px;
+}
+
+section[name="qanda"] .question > h2{
+  font-size:12px;
+  font-weight:400;
+  font-family:#bbb;
+  margin-top:3px;
+  margin-bottom:1px;
+  padding-left:12px;
+  width:100%;
+  box-sizing: border-box;
+  color:#888;
+  min-height: 32px;
+}
+
+section[name="qanda"] .question > h3{
+  font-size:12px;
+  font-weight:400;
+  font-family:#bbb;
+  margin-top:3px;
+  margin-bottom:6px;
+  padding-left:12px;
+  width:100%;
+  box-sizing: border-box;
+  color:#bbb
+}
+
+section[name="qanda"] .question.chosen h1{
+  color:white;
+}
+
+section[name="qanda"] .question.chosen h2{
+  color:white;
+}
+
+section[name="qanda"] .question.chosen h3{
+  color:white;
+}
+section[name="qanda"] .question > h3 > span{
+  color: #CAE19B;
+}
+
+
+section[name="qanda"] > .main{
+  width:75%;
+  height:calc(100vh - 50px);
+  display:inline-block;
+  box-sizing: border-box;
+  overflow:scroll;
+  float:left;
+  min-height:calc(100vh - 50px);
+  position:relative;
+  display:none;
+
+}
+
+section[name="qanda"] > .main > h1{
+  font-size:22px;
+  font-weight:400;
+  width:96%;
+  margin-left:2%;
+  margin-top:10px;
+  margin-bottom:4px;
+}
+
+section[name="qanda"] > .main > h1 > span{
+  color:#ff6632;
+  border:1px #ff6632 solid;
+  font-size:16px;
+  width:25px;
+  height:25px;
+  text-align:center;
+  box-sizing: border-box;
+  padding-top:0px;
+  display:inline-block;
+  border-radius:3px;
+  margin-left:5px;
+}
+
+section[name="qanda"] > .main > h1 > span:hover{
+  opacity:.7;
+  cursor:pointer;
+}
+
+section[name="qanda"] > .main  p{
+  font-size:12px;
+  font-weight:400;
+  width:96%;
+  margin-left:2%;
+  margin-top:2px;
+  margin-bottom:2px;
+}
+
+section[name="qanda"] > .main div[equation]{
+  padding-left:0px;
+  margin-left:0px;
+  margin-left:2%;
+  margin-top:0px;
+}
+
+section[name="qanda"] > .main .answer{
+  box-sizing:border-box;
+  padding:10px;
+  padding-top:30px;
+  font-size:12px;
+  font-weight:400;
+  width:96%;
+  margin-left:2%;
+  margin-top:25px;
+  margin-bottom:12px;
+  border:1px #ddd solid;
+  position:relative;
+  display:inline-block;
+
+
+}
+
+section[name="qanda"] > .main  .answer > p{
+  width:100%;
+  margin-left:0px;
+}
+
+section[name="qanda"] > .main  .answer > div{
+  width:100%;
+  margin-left:0px;
+}
+
+section[name="qanda"] > .main  .answer > .image{
+  width:50px;
+  height:50px;
+  border:4px #ddd solid;
+  position:absolute;
+  z-index:40;
+  top:-27px;
+  left:10px;
+  border-radius:100%;
+  background-size:cover;
+  background-position:center;
+}
+
+section[name="qanda"] > .main  .answer .answer > .image{
+  width:35px;
+  height:35px;
+  top:-15px;
+  left:6px;
+}
+
+section[name="qanda"] > .main  .answer > .author{
+  position:absolute;
+  top:2px;
+  left:70px;
+  font-size:14;
+  color:#bbb;
+}
+
+section[name="qanda"] > .main  .answer > .stars{
+  position:absolute;
+  top:2px;
+  right:2px;
+  font-size:12px;
+  color:#bbb;
+  padding:2px;
+  border:1px gold solid;
+  width:auto;
+  display:inline-block;
+  padding-left:4px;
+  padding-right:4px;
+  border-radius:3px;
+  color:gold;
+
+}
+
+section[name="qanda"] > .main > form{
+  width:100%;
+  bottom:0px;
+  left:0px;
+  height:100px;
+  border:none;
+  position:absolute;
+  border-top:1px #ddd solid;
+  padding:2px;
+  box-sizing: border-box;
+
+}
+
+section[name="qanda"] > .main > form textarea{
+  width:80%;
+  border:none;
+  border:1px #ddd solid;
+  border-radius:4px;
+  float:left;
+  height:50px;
+
+}
+
+section[name="qanda"] > .main > .pane{
+  width:100%;
+  position:absolute;
+  top:0px;
+  left:0px;
+  height:calc(100vh - 120px);
+  background-color:white;
+  z-index:100;
+}
+
+section[name="qanda"] > .main > .pane > h1{
+  font-size:18px;
+  font-weight:400;
+  color:#444;
+  width:95%;
+  margin-left:2.5%;
+  margin-bottom:2px;
+  margin-top:10px;
+}
+
+section[name="qanda"] > .main > .pane > h2{
+  font-size:12px;
+  font-weight:400;
+  color:#444;
+  width:95%;
+  margin-top:0px;
+  margin-left:2.5%;
+}
+
+section[name="qanda"] > .main form input{
+  width:90%;
+  margin-left:2.5%;
+  margin-top:5px;
+  border:1px #ddd solid;
+  height:22px;
+  font-size:13px;
+  padding-left:4px;
+  outline:none;
+}
+
+
+section[name="qanda"] > .main form textarea{
+  width:90%;
+  margin-left:2.5%;
+  margin-top:5px;
+  border:1px #ddd solid;
+  height:20vh;
+  resize:none;
+  font-size:13px;
+  padding-left:4px;
+  outline:none;
+}
+
+
+section[name="qanda"] > .main .answer form textarea{
+  height:10vh;
+  width:97.5%;
+  margin-left:1%;
+}
+
+section[name="qanda"] > .main form .result{
+  width:90%;
+  margin-left:2.5%;
+  margin-top:5px;
+  border:1px lightblue solid;
+  height:33vh;
+  resize:none;
+font-size: 16px;
+  padding-left:4px;
+  outline:none;
+  font-family:"Mukta Vaani","Lato";
+      overflow:scroll;
+}
+
+section[name="qanda"] > .main .answer form .result{
+  height:20vh;
+  width:97.5%;
+  margin-left:1%;
+      height: auto;
+}
+
+section[name="qanda"] > .main form .result div[equation]{
+  margin-left:0px;
+}
+
+section[name="qanda"] > .main form .row{
+  width:90%;
+  margin-left:2.5%;
+  margin-top:5px;
+  border:0px lightblue solid;
+  height:100px;
+  resize:none;
+  font-size:13px;
+  padding-left:4px;
+  outline:none;
+}
+
+section[name="qanda"] > .main .answer form .row{
+  width:97.5%;
+  margin-left:1%;
+}
+
+section[name="qanda"] > .main form .row input{
+  width:auto;
+  margin-left:0px;
+  float:left;
+
+}
+
+
+
+section[name="qanda"] > .main form .row input[type="submit"]{
+  float:right;
+  padding:8px;
+  padding-left:18px;
+  padding-right:18px;
+  font-size:10px;
+  height:auto;
+  background-color:black;
+  color:white;
+  font-weight:300;
+  cursor:pointer;
+}
+
+section[name="qanda"] > .main .answer form .row input[type="submit"]{
+
+}
+
+.addanswer{
+  background-color:#94A6CE;color:white;font-size:24px;cursor:pointer;
+  text-align:center;padding-top:4px;box-sizing:border-box;border-color:#6EC7FF;
+}
+
+.answer .answer .addanswer{
+  font-size:16px;
+  padding-top:2px;
+}
+
+
+.addanswer:hover{
+  opacity:.7;
+}
+
+@media screen and (max-width:960px){
+  header .name{display: none;}
+  .class_dashboard > h1{
+    font-size:16px;
+    box-sizing: border-box;
+    padding-top:10px;
+    width:auto;
+  }
+  .class_dashboard > a{    min-width:60px;text-align:center;}
+  .class_dashboard > a > span{
+    display:none;
+  }
+
+
+
+}
+
+@media screen and (max-width:660px){
+
+  section[name="qanda"] > .main{
+    width:100%;
+    height:calc(100vh - 200px);
+  }
+
+  footer{
+    display:none;
+  }
+
+  header{
+    position:fixed;
+  }
+
+  section[name="qanda"] > .main{
+    margin-top:240px;
+  }
+
+  .class_dashboard{
+    position:fixed;
+    top:60px;
+    border-bottom:1px #ddd solid;
+  }
+
+  section[name="qanda"] > .questions{
+    width:auto;
+    max-height:120px;
+    position:fixed;
+    padding-top:30px;
+    top:120px;
+    left:0px;
+    z-index:100;
+  }
+  section[name="qanda"] > .questions > .mainbar{
+    width:100%;
+    position:fixed;
+    z-index:100;
+    top:120px;
+    background-color:white;
+  }
+
+  section[name="qanda"] > .main > h1{
+    width:80%;
+    font-size:16px;
+  }
+
+}

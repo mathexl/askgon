@@ -57,6 +57,7 @@ header{
   top:0px;
   left:0px;
   z-index:100;
+  height:50px;
 }
 
 header > img{
@@ -112,10 +113,41 @@ section[name="infobar"] > .triad > h2{
   color:#999;
   font-family: "Lato", Arial, Tahoma;
 }
+section[name="infobar"] > .triad > h2 > a{
+  color:#52DEFB;
+}
+a{
+  text-decoration: none;
+}
+a:hover{
+  opacity:.6;
+}
+
+header > .rightlinks{
+  float:right;
+  width:50%;
+  padding-right:20px;
+}
+
+header > .rightlinks > a{
+ height:30px;
+ margin-top:10px;
+ margin-right:10px;
+ box-sizing: border-box;
+ padding-top:3px;
+ color:white;
+ float:right;
+ font-family: "Lato", Arial, Tahoma;
+ font-size:14px;
+}
 </style>
 <body>
   <header>
     <img src="askgon.png">
+    <div class="rightlinks">
+      <a href="/register">Sign Up</a>
+      <a href="/login">Login</a>
+    </div>
   </header>
   <section name="main">
     <h1>Q and A for your classroom</h1>
@@ -126,7 +158,7 @@ section[name="infobar"] > .triad > h2{
     <div class="triad">
       <i class="fa fa-code" aria-hidden="true"></i>
       <h1>Free and Open Sourced</h1>
-      <h2>Use askgon on this site or spin up your own instance with our open soured code.</h2>
+      <h2>Use askgon on this site or spin up your own instance with our open soured <a href="https://github.com/mathexl/askgon">code.</a></h2>
     </div>
     <div class="triad">
       <i class="fa fa-database" aria-hidden="true"></i>
