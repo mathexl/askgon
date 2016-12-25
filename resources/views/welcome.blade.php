@@ -165,17 +165,17 @@ header > .rightlinks > a{
     <div class="triad">
       <i class="fa fa-code" aria-hidden="true"></i>
       <h1>Free and Open Sourced</h1>
-      <h2>Use askgon on this site or spin up your own instance with our open soured <a href="https://github.com/mathexl/askgon">code.</a></h2>
+      <h2>Use [NAME] on this site or spin up your own instance with our open soured <a href="https://github.com/mathexl/askgon">code.</a></h2>
     </div>
     <div class="triad">
       <i class="fa fa-database" aria-hidden="true"></i>
       <h1>We Won't Sell Your Data</h1>
-      <h2>Askgon will not sell your data -- we value your privacy and personal security.</h2>
+      <h2>[NAME] will not sell your data -- we value your privacy and personal security.</h2>
     </div>
     <div class="triad">
       <i class="fa fa-fighter-jet" aria-hidden="true"></i>
       <h1>Fast and Easy to Set Up</h1>
-      <h2>Signing up for a class on Askgon takes under a minute and is easy to do.</h2>
+      <h2>Signing up for a class on [NAME] takes under a minute and is easy to do.</h2>
     </div>
 
   </section>
