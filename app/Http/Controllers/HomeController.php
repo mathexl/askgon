@@ -30,6 +30,9 @@ class HomeController extends Controller
         $gates = [array(), array(), array()];
       }
       $keys = json_decode($user->keys);
+      if(!$keys){
+        $keys = array();
+      }
       foreach($keys as $key){
         if(in_array($key,$gates[0])){
           return true;

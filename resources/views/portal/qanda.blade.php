@@ -68,10 +68,11 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
 <section name="qanda" id="qanda">
   <div class="questions">
     <div class="mainbar">
+      <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
     </div>
 
-    <div class="question" v-for="post in posts" v-on:click="choose(post)" v-bind:class="{ 'chosen': chosen.id == post.id }">
+    <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="post.matchness > 0"  v-bind:class="{ 'chosen': chosen.id == post.id }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
       <h3><span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp <i class="fa fa-comment"></i> @{{post.count}}</h3>
@@ -89,15 +90,29 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
         <textarea placeholder="Title of Post" name="content"></textarea>
         <div class="result" style="display:none;"></div>
         <div class="row">
+          <input placeholder="Add Tags" name="tags" v-model="newtag" v-on:keyup.enter="addtag()"
+          v-on:keyup.32="addtag()" style="width:33%;float:left;margin-right:10px;">
+          <div class="tag" v-for="(index, tag) in tags">
+            <i class="fa fa-close" v-on:click="removetag(index)" style="cursor:pointer;"></i> @{{tag}}
+          </div>
+        </div>
+        <div class="row">
+        <input type="hidden" name="tags" v-model="newtags">
+
         <input type="checkbox" name="question" id="question" value="true"><label for="question" style="margin-top: 8px;
     float: left;"> This is a Question</label>
+
         <input type="submit" value="POST TO PUBLIC">
-      </div>
+        </div>
       </form>
     </div>
 
     <h1>@{{chosen.title}} <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span></h1>
-
+    <div class="row" style="margin-left:15px;margin-bottom:4px;">
+    <div class="tag" v-for="tag in chosen.tags" v-on:click="tagsearch(tag)">
+      @{{tag}}
+    </div>
+    </div>
     <p class="content"></p>
     <div class="correct" v-if="chosen.owner == {{$user->id}} && chosen.solved != true && chosen.question == true" v-on:click="markassolved()"
       v-bind:class="{ 'chosen': chosen.solved == true }">
@@ -138,9 +153,9 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
               </div>
               <div class="stars" v-on:click="vote(subanswer.id, answer.id)" style="cursor:pointer;" v-if="subanswer.voted != true"><i class="fa fa-star"></i> @{{subanswer.vote}}</div>
               <div class="stars" v-else style="background-color:gold;color:white;"><i class="fa fa-star"></i> @{{subanswer.vote}}</div>
-
               <p>@{{subanswer.content}}</p>
             </div>
+
             <div class="answer">
               <div class="image addanswer" v-on:click="subanswer(answer.id)"><i class="fa fa-plus"></i></div>
               <div class="author" style="left:55px;">ANSWER BY YOU</div>
@@ -194,15 +209,38 @@ var tours = new Vue({
   data: {
     posts: {!!json_encode($posts)!!},
     chosen: '',
-    answers: ''
+    answers: '',
+    search: '',
+    newtag: '',
+    tags: [],
+    newtags: JSON.stringify([])
   },
   created: function () {
-    //this.chosen = this.notes[0];
-    //console.log(this.notes);
-    console.log(this.posts);
-
+    for(i = 0; i < this.posts.length; i++){
+      this.posts[i].active = true;
+      if(this.posts[i].tags){
+        this.posts[i].tags = JSON.parse(this.posts[i].tags);
+      }
+    }
+  },
+  computed: {
+    posts_meta: function() {
+      return this.posts.filter(function (post) {
+        return post.matchness;
+      });
+    }
   },
   methods: {
+    addtag: function(){
+      t = this.newtag;
+      this.tags.push(t);
+      this.newtag = '';
+      this.newtags = JSON.stringify(this.tags);
+    },
+    removetag: function(index){
+      this.tags.splice(index, 1);
+      this.newtags = JSON.stringify(this.tags);
+    },
     choose: function (post) {
       console.log(post);
       $(".main").show();
@@ -225,6 +263,35 @@ var tours = new Vue({
       str = format(str);
       this.chosen = tobechosen;
       $(".main .content").html(str);
+    },
+    searching: function (){
+      for(i = 0; i < this.posts.length; i++){
+        this.posts[i].matchness = 0;
+        if(this.posts[i].title.indexOf(this.search) != -1 ||
+           this.posts[i].content.toLowerCase().indexOf(this.search.toLowerCase()) != -1
+        ) {
+          this.posts[i].matchness = 10;
+        }
+
+        wordmap = this.posts[i].title.split(" ");
+        wordmap = wordmap.concat(this.posts[i].content.split(" "));
+        needles = this.search.split(" ");
+        for(k = 0; k < wordmap.length; k++){
+          for(r = 0; r < needles.length; r++){
+            if(needles[r] == wordmap[k]){
+              this.posts[i].matchness++;
+            }
+          }
+        }
+      }
+    },
+    tagsearch: function(tag) {
+      for(i = 0; i < this.posts.length; i++){
+        this.posts[i].matchness = 0;
+        if(this.posts[i].tags.indexOf(tag) > -1){
+          this.posts[i].matchness = 10;
+        }
+      }
     },
     answer: function () {
       var base_url = window.location.protocol + "//" + window.location.host;

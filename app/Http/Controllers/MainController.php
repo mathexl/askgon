@@ -93,10 +93,11 @@ class MainController extends Controller
       $section = Section::find($id);
       if($this->hallpass($section)){
         $post = new Post();
-        if($request->question == NULL){$request->question = false;}
+        if($request->question == NULL){$post->question = false;}
         else {$post->question = true;}
         $post->title = $request->title;
         $post->content = $request->content;
+        $post->tags = $request->tags;
         $post->owner = $user->id;
         $post->section = $section->id;
         $post->solved = false;
@@ -296,6 +297,8 @@ class MainController extends Controller
         $count = count($answers);
         $post->count = $count;
         $post->answers = json_encode($answers);
+        $post->active = true;
+        $post->matchness = 1;
       }
       if($this->hallpass($section)){
         return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user]);
