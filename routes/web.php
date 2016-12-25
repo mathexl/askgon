@@ -24,6 +24,7 @@ Route::post('/class/{id}/remove','MainController@deletequestion');
 Route::post('/class/{id}/vote','MainController@vote');
 Route::get('/class/{id}','MainController@qanda');
 Route::post('/class/{id}/post','MainController@post');
+Route::post('/class/{id}/addclass','MainController@addclass');
 
 Auth::routes();
 Route::get('/logout', function () {

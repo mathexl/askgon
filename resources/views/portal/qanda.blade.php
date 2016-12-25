@@ -7,8 +7,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.js"></script>
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/js/vue.js"></script>
     <link rel="stylesheet" href="/css/font-awesome.min.css">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -22,6 +22,11 @@
     <script>
         window.Laravel = <?php echo json_encode(['csrfToken' => csrf_token(),]); ?>
     </script>
+    <style>
+    .result{
+      display:none !important;
+    }
+    </style>
 </head>
 <body>
 
@@ -57,6 +62,9 @@ footer{
   color:black !important;
 }
 </style>
+<section name="admin">
+Pass the link to any students to access the class. Password: <span>{{$section->password}}</span>
+</section>
 <section name="qanda" id="qanda">
   <div class="questions">
     <div class="mainbar">
@@ -124,7 +132,7 @@ footer{
 
             <div class="answer" v-for="subanswer in answer.subanswers" style="margin-bottom:2px;marign-top:2px;">
               <div style="background-image:url('/profile.png');" class="image"></div>
-              <div class="author" style="left:55px;">Answered by @{{answer.name}}
+              <div class="author" style="left:55px;">Answered by @{{subanswer.name}}
                 <span v-if="subanswer.owner == {{$user->id}}" v-on:click="deletesubanswer(answer.id,subanswer.id)" style="cursor:pointer;"> <i class="fa fa-trash"></i>
                 </span>
               </div>
@@ -139,35 +147,13 @@ footer{
               <form>
                 {!! csrf_field() !!}
                 <textarea placeholder="Title of Post" name="content" v-model="answer.response" class="answer_content"></textarea>
-                <div class="result answer_popup" style="display:none;"></div>
+                <div class="result answer_popup" style="display:none !important;"></div>
               </form>
 
             </div>
     </div>
 
-    <div class="answer" style="display:none;">
-      <div style="background-image:url('/profile.png');" class="image"></div>
-      <div class="author">Answered by STEVEN SHAPHER</div>
-      <div class="stars"><i class="fa fa-star"></i> 20</div>
-      <p>You Are Pretty Close! The thing about this question is that you need to do integration by
-      parts since there is no u du pair.  For instance, image you did the following: </p>
-      <div equation style="min-height:10px;">
-        <div term style="padding-top: 15px;height:50px;">u = 2x, du = 2x <hr therefore> x<hr dot>e<sup>u</sup><hr dot>du</div></div>
-      <p>That wouldn't work since you have a left over x.  Try solving it with u-v substitution
-      (substitution by parts) and you should be set! </p>
 
-    </div>
-
-    <div class="answer" style="display:none;">
-      <div style="background-image:url('/profile.jpg');" class="image"></div>
-      <div class="author">Answered by GEORGE MCLENNAN</div>
-      <div class="stars"><i class="fa fa-star"></i> 3</div>
-      <p>The key to remembering the difference is that in u-substitution you don't need to jump through
-      any hoops to make it fit.  Instead, it works cleanly.  It let's you pretty much just cross out
-    the du to solve for the answer and go from there.  In this case, no such mix works.  Integration by parts
-  is often the go to method for products of a polynomial and an exponential unless the polynomial IS the derivative of the exponent. </p>
-
-    </div>
 
   </div>
 </section>

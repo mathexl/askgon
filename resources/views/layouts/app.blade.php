@@ -4,11 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.js"></script>
+    <script src="/js/jquery-1.9.1.min.js"></script>
+    <script src="/js/vue.js"></script>
     <link rel="stylesheet" href="/css/font-awesome.min.css">
 
     <title>{{ config('app.name', 'Laravel') }}</title>

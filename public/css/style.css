@@ -571,7 +571,7 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
     top:120px;
     left:0px;
     z-index:100;
-    
+
   }
   section[name="qanda"] > .questions > .mainbar{
     width:100%;
@@ -586,4 +586,20 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
     font-size:16px;
   }
 
+}
+
+section[name="admin"]{
+    width: 100%;
+    height: 50px;
+    background-color: #fefefe;
+    box-sizing: border-box;
+    padding: 14px;
+    font-family: "Raleway", "Lato", Arial;
+    box-shadow: 1px 1px #ddd;
+}
+
+section[name="admin"] > span{
+  padding:2px;
+  background-color:#eeeeee;
+  font-family: "Consolas", "Monospace", "Arial";
 }
