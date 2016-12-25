@@ -161,10 +161,10 @@ class MainController extends Controller
     public function vote(Request $request, $id)
     {
       $user = Auth::user();
-	  if($user==null)
-	  {
-		  return redirect("/login");
-	  }
+  	  if($user==null)
+  	  {
+  		  return redirect("/login");
+  	  }
       $section = Section::find($id);
       if($this->hallpass($section)){
         $answer = Answer::find($request->id);

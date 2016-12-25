@@ -52,7 +52,7 @@ section[name="main"] > h3{
   position:absolute;
   bottom:20px;
 }
-section[name="main"] > h3 > img{
+section[name="main"] > h3 > a img{
   display:inline-block;
   height:24px;
   margin-bottom:-9px;
@@ -159,7 +159,7 @@ header > .rightlinks > a{
     <h1>Q and A for your classroom</h1>
     <h2>An online q and a platform for your classroom, free and open sourced</h2>
     <img src="/sshot.png">
-    <h3>a project by <img src="parsegon.png"></h3>
+    <h3>a project by <a href="https://www.parsegon.com"><img src="parsegon.png"></a></h3>
   </section>
   <section name="infobar">
     <div class="triad">
