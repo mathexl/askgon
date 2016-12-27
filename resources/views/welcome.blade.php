@@ -164,8 +164,8 @@ header > .rightlinks > a{
   <section name="infobar">
     <div class="triad">
       <i class="fa fa-code" aria-hidden="true"></i>
-      <h1>Free and Open Sourced</h1>
-      <h2>Use [NAME] on this site or spin up your own instance with our open soured <a href="https://github.com/mathexl/askgon">code.</a></h2>
+      <h1>Free and Open Source</h1>
+      <h2>Use [NAME] on this site or spin up your own instance with our open source <a href="https://github.com/mathexl/askgon">code.</a></h2>
     </div>
     <div class="triad">
       <i class="fa fa-database" aria-hidden="true"></i>

@@ -71,7 +71,7 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
       <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
     </div>
-
+    <div class="searchnotice" v-show="searchtag != ''" ><i class="fa fa-close" v-on:click="notag()"></i> Posts marked with #@{{searchtag}}</div>
     <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="post.matchness > 0"  v-bind:class="{ 'chosen': chosen.id == post.id }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
@@ -99,8 +99,13 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
         <div class="row">
         <input type="hidden" name="tags" v-model="newtags">
 
-        <input type="checkbox" name="question" id="question" value="true"><label for="question" style="margin-top: 8px;
-    float: left;"> This is a Question</label>
+        <input type="checkbox" name="question" id="question" value="true">
+          <label for="question" style="margin-top: 5px;
+    float: left;margin-left:5px;margin-right:10px;"> This is a Question</label>
+
+        <input type="checkbox" name="anonymous" id="anonymous" value="false">
+        <label for="anonymous" style="margin-top: 5px;
+        float: left;margin-left:5px;"> Anonymous Post</label>
 
         <input type="submit" value="POST TO PUBLIC">
         </div>
@@ -108,9 +113,10 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
     </div>
 
     <h1>@{{chosen.title}} <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span></h1>
+    <h2>by <span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></h2>
     <div class="row" style="margin-left:15px;margin-bottom:4px;">
     <div class="tag" v-for="tag in chosen.tags" v-on:click="tagsearch(tag)">
-      @{{tag}}
+      #@{{tag}}
     </div>
     </div>
     <p class="content"></p>
@@ -213,6 +219,7 @@ var tours = new Vue({
     search: '',
     newtag: '',
     tags: [],
+    searchtag: '',
     newtags: JSON.stringify([])
   },
   created: function () {
@@ -241,6 +248,9 @@ var tours = new Vue({
       this.tags.splice(index, 1);
       this.newtags = JSON.stringify(this.tags);
     },
+    notag: function(){
+      this.searchtag = '';
+    },
     choose: function (post) {
       console.log(post);
       $(".main").show();
@@ -265,6 +275,7 @@ var tours = new Vue({
       $(".main .content").html(str);
     },
     searching: function (){
+      this.searchtag = '';
       for(i = 0; i < this.posts.length; i++){
         this.posts[i].matchness = 0;
         if(this.posts[i].title.indexOf(this.search) != -1 ||
@@ -286,6 +297,7 @@ var tours = new Vue({
       }
     },
     tagsearch: function(tag) {
+      this.searchtag = tag;
       for(i = 0; i < this.posts.length; i++){
         this.posts[i].matchness = 0;
         if(this.posts[i].tags.indexOf(tag) > -1){

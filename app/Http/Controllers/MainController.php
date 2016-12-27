@@ -93,8 +93,10 @@ class MainController extends Controller
       $section = Section::find($id);
       if($this->hallpass($section)){
         $post = new Post();
-        if($request->question == NULL){$post->question = false;}
+        if($request->question == NULL || $request->question == false){$post->question = false;}
         else {$post->question = true;}
+        if($request->anonymous == NULL || $request->anonymous == false){$post->anonymous = false;}
+        else {$post->anonymous = true;}
         $post->title = $request->title;
         $post->content = $request->content;
         $post->tags = $request->tags;
@@ -265,6 +267,9 @@ class MainController extends Controller
       }
       $posts = DB::table('posts')->where("section","=",$section->id)->get();
       foreach($posts as $post){
+        if($post->anonymous != true){
+          $post->name = User::find($post->owner)->name;
+        }
         $answers = DB::table('answers')->where("question","=",$post->id)->get();
         foreach($answers as $answer){
           $subanswers = DB::table('answers')->where("head","=",$answer->id)->get();

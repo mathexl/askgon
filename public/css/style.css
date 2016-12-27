@@ -83,7 +83,24 @@ display: inline-block;
 }
 
 
+.searchnotice{
+    width: 100%;
+    text-align: center;
+    color: white;
+    background-color: #52AEFB;
+    font-size: 12px;
+    display: inline-block;
+    position: relative;
+}
 
+.searchnotice .fa-close{
+  position: absolute;
+  top:3px;
+  left:2px;
+  cursor: pointer;
+  font-size:12px;
+  color:white;
+}
 
 section[name="qanda"]{
   width:100%;
@@ -169,6 +186,14 @@ section[name="qanda"] > .questions > .mainbar > .button{
 
 section[name="qanda"] > .questions > .mainbar > .button:hover{
   opacity:.8;
+}
+
+section[name="qanda"] > .questions > .mainbar > input {
+border-radius: 3px;
+border: 1px #ddd solid;
+margin-top: 2px;
+margin-left: 2px;
+padding-left: 3px;
 }
 
 section[name="qanda"] > .questions > .mainbar > .button.chosen{
@@ -265,9 +290,15 @@ section[name="qanda"] > .main > h1{
   width:96%;
   margin-left:2%;
   margin-top:10px;
-  margin-bottom:4px;
+  margin-bottom:2px;
 }
+section[name="qanda"] > .main > h2{
 
+font-size: 11px;
+    margin-left: 19px;
+    margin-top: 0px;
+    margin-bottom: 2px;
+}
 section[name="qanda"] > .main > h1 > span{
   color:#ff6632;
   border:1px #ff6632 solid;
@@ -316,7 +347,7 @@ section[name="qanda"] > .main .answer{
   border:1px #ddd solid;
   position:relative;
   display:inline-block;
-
+  background-color:white;
 
 }
 
@@ -341,6 +372,10 @@ section[name="qanda"] > .main  .answer > .image{
   border-radius:100%;
   background-size:cover;
   background-position:center;
+}
+
+section[name="qanda"] > .main .answer .answer {
+  background-color: #f6f6f6;
 }
 
 section[name="qanda"] > .main  .answer .answer > .image{
@@ -528,12 +563,12 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
 
 .addanswer{
   background-color:#94A6CE;color:white;font-size:24px;cursor:pointer;
-  text-align:center;padding-top:4px;box-sizing:border-box;border-color:#6EC7FF;
+  text-align:center;padding-top:3px;box-sizing:border-box;border-color:#6EC7FF;
 }
 
 .answer .answer .addanswer{
   font-size:16px;
-  padding-top:2px;
+  padding-top:1px;
 }
 
 
@@ -619,7 +654,8 @@ section[name="admin"]{
 }
 
 section[name="admin"] > span{
-  padding:2px;
+  padding: 5px;
+  border-radius: 2px;
   background-color:#eeeeee;
   font-family: "Consolas", "Monospace", "Arial";
 }
