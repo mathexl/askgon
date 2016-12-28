@@ -1,5 +1,10 @@
 <?php
-
+/****************************************
+main controller with 90% of the code
+Postrium is managed and run by Parsegon, Inc.
+Direct any security inquiries or questions
+to mathew@parsegon.com
+****************************************/
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -12,14 +17,29 @@ use DB;
 
 class MainController extends Controller
 {
-    //
+    /**************** gatekeeper ***********************/
+/*  gatekeeper determines if a user has access to the data
+    of a class. Each class has a set of gates alongside an
+    owner. The owner (who created the class) has the right
+    to read/write, alongside any added student or admin.
+    Postrium's current version does not permit read only
+    or write only permissions.                         */
+    /***************************************************/
     private function gatekeeper(Section $section, $type){
-      //checks if the user is a student in the class
+      /*************************************************
+      Checking user auth and returning error if not.
+      *************************************************/
       $user = Auth::user();
-    if($user==null)
-    {
-      return redirect("/login");
-    }
+      if($user==null)
+      {
+        return redirect("/login");
+      }
+      /*************************************************
+      Gates 0, 1 control access permissions:
+
+      Gate 0 : all students (users)
+      Gate 1: all admins
+      *************************************************/
       $gates = json_decode($section->gates);
       if(!is_array($gates)){
         $gates = [];
@@ -33,6 +53,9 @@ class MainController extends Controller
           return true;
         }
       }
+      /************************************************
+      Last check for the section owner.
+      *************************************************/
       if($section->owner == $user->id){
         return true;
       }
@@ -40,15 +63,23 @@ class MainController extends Controller
     }
 
     private function inclass(Section $section){
+      //call to gatekeeper checking gate for students
       return $this->gatekeeper($section, 0);
     }
 
     private function adminclass(Section $section){
+      //call to gatekeeper checking gate for admins
       return $this->gatekeeper($section, 1);
     }
 
+    /**************** hallpass ***********************/
+    /*
+    hallpass implements the gatekeeper function checking if
+    a user has access to the data of a class, checking all
+    two gates and ownership possibility.
+    */
+    /***************************************************/
     private function hallpass(Section $section){
-      //checks if the user is a student or the teacher of the class
       $user = Auth::user();
       if($user==null)
       {
@@ -66,18 +97,50 @@ class MainController extends Controller
       return false;
     }
 
+
+    /***************** get posts ***********************/
+    /*
+    Get posts retrives the posts and associated meta data,
+    including answers, votes, subanswers, etc, and construts
+    a JSON encoded array of all the meta data to send to the
+    question and answer view.
+    */
+    /***************************************************/
     private function getposts($id){
+      //retract posts using database call.
       $posts = DB::table('posts')->where("section","=",$id)->get();
+      /*************************************************
+      Checking user auth and returning error if not.
+      *************************************************/
       $user = Auth::user();
       if(!$user){
         return false;
       }
       foreach($posts as $post){
+        /*******************************************************
+        Each post has a few necessary data parts that determine
+        how it interacts with the view
+        Anonymous: Strips any name associated with the post
+        Voted: Boolean to determine if the post has been voted already by current user
+        Count: Number of votes currently on the post.
+        Answers: Array of Object Answers that have their own meta data components:
+            || Voted: If the answer has been voted by the current user.
+            || Count: Number of votes on that answer
+            || Content: The info of that answer
+            || Name: Name of Person who wrote that answer/owns it (stored as ID)
+            || Subanswers: Array of Object Answers. Subanswers -> subanswers field is blank
+        Content: Content of the post
+        Tags: JSON array of tags of post.
+        Active: For Q and A use
+        Matchness: For Q and A use (sorting)
+        *******************************************************/
         if($post->anonymous != true){
+          //add only when not anonymous
           $post->name = User::find($post->owner)->name;
         }
         $answers = DB::table('answers')->where("question","=",$post->id)->get();
         foreach($answers as $answer){
+          //Iterate through the answers of the for each block. 
           $subanswers = DB::table('answers')->where("head","=",$answer->id)->get();
           if($answer->voted == ""){
             $answer->voted = "[]";
