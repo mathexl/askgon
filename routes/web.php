@@ -26,6 +26,9 @@ Route::get('/class/{id}','MainController@qanda');
 Route::post('/class/{id}/post','MainController@post');
 Route::post('/class/{id}/addclass','MainController@addclass');
 
+Route::post('/semaphore','MainController@semaphore');
+Route::post('/tick','MainController@tick');
+
 Auth::routes();
 Route::get('/logout', function () {
   Auth::logout();

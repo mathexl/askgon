@@ -303,6 +303,7 @@ var tours = new Vue({
       }
     },
     answer: function () {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -336,7 +337,51 @@ var tours = new Vue({
       $(".answer_popup").hide();
 
     },
+    tick: function () {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/tick",
+          data: {'section': {{$section->id}} },
+          success: function(data){
+            window.posts = data;
+          },
+          finished: function(data){
+          }
+      });
+      this.posts = window.posts;
+    },
+    semaphore: function (){
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/semaphore",
+          data: {'section': {{$section->id}} },
+          success: function(data){
+            window.semaphore = data;
+          },
+          finished: function(data){
+          }
+      });
+      if(window.semaphore != false){
+        this.posts = window.semaphore;
+        return true;
+      } else {
+        return false;
+      }
+    },
     subanswer: function (id) {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -371,6 +416,7 @@ var tours = new Vue({
       $(".answer_content").next().html("");
     },
     deleteanswer: function (id) {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -397,6 +443,7 @@ var tours = new Vue({
       this.answers = this.chosen.answers;
     },
     vote: function (id,up_id) {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -435,6 +482,7 @@ var tours = new Vue({
       this.answers = this.chosen.answers;
     },
     deletesubanswer: function (id,sub_id) {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -499,6 +547,7 @@ var tours = new Vue({
       this.chosen.solved = false;
     },
     remove: function () {
+      while(this.semaphore() != false) {};
       var base_url = window.location.protocol + "//" + window.location.host;
       $.ajaxSetup({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
@@ -517,6 +566,11 @@ var tours = new Vue({
     }
   }
 });
+
+window.setInterval(function(){
+  tours.tick();
+  console.log("ticking!!");
+}, 1000);
 </script>
 <!-- Scripts -->
 <script src="/js/app.js"></script>

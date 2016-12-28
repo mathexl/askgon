@@ -66,6 +66,100 @@ class MainController extends Controller
       return false;
     }
 
+    private function getposts($id){
+      $posts = DB::table('posts')->where("section","=",$id)->get();
+      $user = Auth::user();
+      if(!$user){
+        return false;
+      }
+      foreach($posts as $post){
+        if($post->anonymous != true){
+          $post->name = User::find($post->owner)->name;
+        }
+        $answers = DB::table('answers')->where("question","=",$post->id)->get();
+        foreach($answers as $answer){
+          $subanswers = DB::table('answers')->where("head","=",$answer->id)->get();
+          if($answer->voted == ""){
+            $answer->voted = "[]";
+          }
+          $voted = json_decode($answer->voted);
+          if(in_array($user->id, $voted)){
+            $answer->voted = true;
+          } else {
+            $answer->voted = false;
+          }
+          foreach($subanswers as $subanswer){
+            if($subanswer->voted == ""){
+              $subanswer->voted = "[]";
+            }
+            $voted = json_decode($subanswer->voted);
+            if(in_array($user->id, $voted)){
+              $subanswer->voted = true;
+            } else {
+              $subanswer->voted = false;
+            }
+            $owner = User::find($subanswer->owner);
+            $subanswer->name = $owner->name;
+          }
+          $answer->subanswers = json_encode($subanswers);
+          $owner = User::find($answer->owner);
+          $answer->name = $owner->name;
+        }
+        $count = count($answers);
+        $post->count = $count;
+        $post->answers = json_encode($answers);
+        $post->active = true;
+        $post->matchness = 1;
+      }
+      return $posts;
+    }
+
+
+    private function checksemaphore($section){
+      $user = Auth::user();
+      if($section->semaphore != $user->id){
+        return false; //disallow if they don't own the lockf
+      } else {
+        return true;
+      }
+    }
+
+    private function resetsemaphore($section){
+      $section->semaphore = false;
+      $section->save();
+    }
+
+    //synchronousness
+    public function semaphore(Request $request){
+      $section = Section::find($request->section);
+      $user = Auth::user();
+      if(!$user){
+        return false;
+      }
+      if(!$this->hallpass($section)){
+        return false;
+      }
+      if($section->semaphore > 0){
+        return json_encode(false);
+      } else {
+        $section->semaphore = $user->id; // setting lock
+        $section->save();
+        return json_encode($this->getposts($section->id));
+      }
+    }
+
+    public function tick(Request $request){
+      $section = Section::find($request->section);
+      $user = Auth::user();
+      if(!$user){
+        return false;
+      }
+      if(!$this->hallpass($section)){
+        return false;
+      }
+      return json_encode($this->getposts($section->id));
+    }
+
     public function addclass(Request $request, $id){
       $section = Section::find($id);
       if($request->password != $section->password && $request->password != $section->copassword){
@@ -109,11 +203,14 @@ class MainController extends Controller
     public function post(Request $request, $id)
     {
       $user = Auth::user();
-	  if($user==null)
-	  {
-		  return redirect("/login");
-	  }
+  	  if($user==null)
+  	  {
+  		  return redirect("/login");
+  	  }
       $section = Section::find($id);
+
+      $this->checksemaphore($section);
+
       if($this->hallpass($section)){
         $post = new Post();
         if($request->question == NULL || $request->question == false){$post->question = false;}
@@ -127,8 +224,11 @@ class MainController extends Controller
         $post->section = $section->id;
         $post->solved = false;
         $post->save();
+        $this->resetsemaphore($section);
         return redirect("/class/" . $section->id . "");
       }
+      $section->semaphore = false;
+      $section->save();
       return view("404");
     }
 
@@ -141,6 +241,8 @@ class MainController extends Controller
 		  return redirect("/login");
 	  }
       $section = Section::find($id);
+      $this->checksemaphore($section);
+
       if($this->hallpass($section)){
         $answer = new Answer();
         $answer->vote = 0;
@@ -154,6 +256,7 @@ class MainController extends Controller
         $answer->subanswers = [];
         $answer->name = $user->name;
         $answer->voted = false;
+        $this->resetsemaphore($section);
         return json_encode($answer);
       }
       return view("404");
@@ -167,6 +270,7 @@ class MainController extends Controller
 		  return redirect("/login");
 	  }
       $section = Section::find($id);
+      $this->checksemaphore($section);
       if($this->hallpass($section)){
         $answer = new Answer();
         $answer->vote = 0;
@@ -179,6 +283,7 @@ class MainController extends Controller
         $answer->save();
         $answer->name = $user->name;
         $answer->voted = false;
+        $this->resetsemaphore($section);
         return json_encode($answer);
       }
       return view("404");
@@ -192,6 +297,7 @@ class MainController extends Controller
   		  return redirect("/login");
   	  }
       $section = Section::find($id);
+      $this->checksemaphore($section);
       if($this->hallpass($section)){
         $answer = Answer::find($request->id);
         $answer->vote = $answer->vote + 1;
@@ -202,6 +308,7 @@ class MainController extends Controller
         $voted[] = $user->id;
         $answer->voted = json_encode($voted);
         $answer->save();
+        $this->resetsemaphore($section);
         return "done!";
       }
       return view("404");
@@ -216,13 +323,16 @@ class MainController extends Controller
 		  return redirect("/login");
 	  }
       $section = Section::find($id);
+      $this->checksemaphore($section);
       if($this->hallpass($section)){
         $answer = Answer::find($request->id);
         if($answer->owner == $user->id){
           $answer->delete();
+          $this->resetsemaphore($section);
           return "True";
         }
       }
+      $this->resetsemaphore($section);
       return "False";
     }
 
@@ -250,12 +360,14 @@ class MainController extends Controller
 		  return redirect("/login");
 	  }
       $section = Section::find($id);
+      $this->checksemaphore($section);
       if($this->hallpass($section)){
         $question = Post::find($request->question);
         if($question->owner == $user->id){
           $question->delete();
         }
       }
+      $this->resetsemaphore($section);
       return "hello";
     }
 
@@ -292,46 +404,7 @@ class MainController extends Controller
         $section->copassword = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
         $section->save();
       }
-      $posts = DB::table('posts')->where("section","=",$section->id)->get();
-      foreach($posts as $post){
-        if($post->anonymous != true){
-          $post->name = User::find($post->owner)->name;
-        }
-        $answers = DB::table('answers')->where("question","=",$post->id)->get();
-        foreach($answers as $answer){
-          $subanswers = DB::table('answers')->where("head","=",$answer->id)->get();
-          if($answer->voted == ""){
-            $answer->voted = "[]";
-          }
-          $voted = json_decode($answer->voted);
-          if(in_array($user->id, $voted)){
-            $answer->voted = true;
-          } else {
-            $answer->voted = false;
-          }
-          foreach($subanswers as $subanswer){
-            if($subanswer->voted == ""){
-              $subanswer->voted = "[]";
-            }
-            $voted = json_decode($subanswer->voted);
-            if(in_array($user->id, $voted)){
-              $subanswer->voted = true;
-            } else {
-              $subanswer->voted = false;
-            }
-            $owner = User::find($subanswer->owner);
-            $subanswer->name = $owner->name;
-          }
-          $answer->subanswers = json_encode($subanswers);
-          $owner = User::find($answer->owner);
-          $answer->name = $owner->name;
-        }
-        $count = count($answers);
-        $post->count = $count;
-        $post->answers = json_encode($answers);
-        $post->active = true;
-        $post->matchness = 1;
-      }
+      $posts = $this->getposts($section->id);
       if($this->inclass($section)){
         return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false]);
       } else if($this->adminclass($section)) {
