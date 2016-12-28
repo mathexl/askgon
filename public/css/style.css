@@ -227,6 +227,9 @@ section[name="qanda"] .question > h1{
   font-family:#bbb;
   margin-top:6px;
   margin-bottom:1px;
+  width:90%;
+  overflow: hidden;
+  max-height: 38px;
   padding-left:12px;
 }
 

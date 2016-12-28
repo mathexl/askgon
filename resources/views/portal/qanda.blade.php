@@ -62,9 +62,18 @@ footer{
   color:black !important;
 }
 </style>
+@if($section->owner == Auth::user()->id)
 <section name="admin">
-Pass the link to any students to access the class. Password: <span>{{$section->password}}</span>
+Pass the link to any users or admins to access the forum. <b>User Password</b>: <span>{{$section->password}}</span>.
+<b>Admin Password</b>: <span>{{$section->copassword}}</span>.
 </section>
+@endif
+
+@if($section->owner != Auth::user()->id && $admin)
+<section name="admin">
+You have admin access to this forum.
+</section>
+@endif
 <section name="qanda" id="qanda">
   <div class="questions">
     <div class="mainbar">

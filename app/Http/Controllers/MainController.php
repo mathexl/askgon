@@ -13,7 +13,7 @@ use DB;
 class MainController extends Controller
 {
     //
-    private function inclass(Section $section){
+    private function gatekeeper(Section $section, $type){
       //checks if the user is a student in the class
       $user = Auth::user();
     if($user==null)
@@ -29,12 +29,22 @@ class MainController extends Controller
         $keys = array();
       }
       foreach($keys as $key){
-        if(in_array($key,$gates[0])){
+        if(in_array($key,$gates[$type])){
           return true;
         }
       }
-        return false;
+      if($section->owner == $user->id){
+        return true;
+      }
+      return false;
+    }
 
+    private function inclass(Section $section){
+      return $this->gatekeeper($section, 0);
+    }
+
+    private function adminclass(Section $section){
+      return $this->gatekeeper($section, 1);
     }
 
     private function hallpass(Section $section){
@@ -50,12 +60,15 @@ class MainController extends Controller
       if($this->inclass($section)){
       return true;
       }
+      if($this->adminclass($section)){
+      return true;
+      }
       return false;
     }
 
     public function addclass(Request $request, $id){
       $section = Section::find($id);
-      if($request->password != $section->password){
+      if($request->password != $section->password && $request->password != $section->copassword){
         return redirect('/class/' . $section->id . '');
       }
       $user = Auth::user();
@@ -65,7 +78,13 @@ class MainController extends Controller
       if(!isset($gates[0])){
         $gates = [array(), array(), array()]; //students, TAs, admins
       }
-      $gates[0][] = $key;
+
+      if($request->password == $section->password){
+        $gates[0][] = $key; // student pass
+      } else {
+        $gates[1][] = $key; // instructor pass
+      }
+
       $keys[] = $key;
       $user->keys = json_encode($keys);
       $section->gates = json_encode($gates);
@@ -81,6 +100,7 @@ class MainController extends Controller
       $class->name = $request->name;
       $class->school = $request->school;
       $class->password = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
+      $class->copassword = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
       $class->gates = json_encode([array(), array(), array()]); //students, TAs, admins
       $class->save();
       return redirect("/home");
@@ -268,6 +288,10 @@ class MainController extends Controller
         $section->password = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
         $section->save();
       }
+      if(!$section->copassword){
+        $section->copassword = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
+        $section->save();
+      }
       $posts = DB::table('posts')->where("section","=",$section->id)->get();
       foreach($posts as $post){
         if($post->anonymous != true){
@@ -308,8 +332,10 @@ class MainController extends Controller
         $post->active = true;
         $post->matchness = 1;
       }
-      if($this->hallpass($section)){
-        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user]);
+      if($this->inclass($section)){
+        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false]);
+      } else if($this->adminclass($section)) {
+        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => true]);
       } else {
         return view("portal.register")->with(["section" => $section]);
       }
