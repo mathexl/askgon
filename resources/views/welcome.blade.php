@@ -38,8 +38,8 @@ section[name="main"] > h2{
 }
 
 section[name="main"] > h2 + img{
-width: 75%;
-margin-left: 12.5%;
+width: 65%;
+margin-left: 17.5%;
 border-radius: 5px;
 }
 
