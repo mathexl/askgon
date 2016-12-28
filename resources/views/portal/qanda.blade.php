@@ -269,6 +269,7 @@ var tours = new Vue({
       str = tobechosen.content;
       str = format(str);
       this.chosen = tobechosen;
+      this.chosen.tags = JSON.parse(this.chosen.tags);
       $(".main .content").html(str);
     },
     searching: function (){
