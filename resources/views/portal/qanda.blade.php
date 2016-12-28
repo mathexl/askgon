@@ -31,7 +31,7 @@
 <body>
 
 <header style="background:white;position:relative;border-bottom:1px #DDD solid;">
-  <a href="/"><img src="/askgon_black.png"></a>
+  <a href="/"><img src="/postrium.png"></a>
   <div class="rightlinks">
     @if(!Auth::user())
     <a href="/register">Sign Up</a>

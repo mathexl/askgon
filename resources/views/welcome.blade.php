@@ -149,7 +149,7 @@ header > .rightlinks > a{
 </style>
 <body>
   <header>
-    <img src="askgon.png">
+    <img src="postrium_white.png">
     <div class="rightlinks">
       <a href="/register">Sign Up</a>
       <a href="/login">Login</a>
@@ -158,24 +158,24 @@ header > .rightlinks > a{
   <section name="main">
     <h1>Q and A for your classroom</h1>
     <h2>A question and answer web platform for your classroom or group, free and open source</h2>
-    <img src="/sshot.png">
+    <img src="/sshot1.png">
     <h3>a project by <a href="https://www.parsegon.com"><img src="parsegon.png"></a></h3>
   </section>
   <section name="infobar">
     <div class="triad">
       <i class="fa fa-code" aria-hidden="true"></i>
       <h1>Free and Open Source</h1>
-      <h2>Use [NAME] on this site or spin up your own instance with our open source <a href="https://github.com/mathexl/askgon">code.</a></h2>
+      <h2>Use Postrium on this site or spin up your own instance with our open source <a href="https://github.com/mathexl/askgon">code.</a></h2>
     </div>
     <div class="triad">
       <i class="fa fa-database" aria-hidden="true"></i>
       <h1>We Won't Sell Your Data</h1>
-      <h2>[NAME] will not sell your data -- we value your privacy and personal security.</h2>
+      <h2>Postrium will not sell your data -- we value your privacy and personal security.</h2>
     </div>
     <div class="triad">
       <i class="fa fa-fighter-jet" aria-hidden="true"></i>
       <h1>Fast and Easy to Set Up</h1>
-      <h2>Signing up for a class on [NAME] takes under a minute and is easy to do.</h2>
+      <h2>Signing up for a class on Postrium takes under a minute and is easy to do.</h2>
     </div>
 
   </section>
