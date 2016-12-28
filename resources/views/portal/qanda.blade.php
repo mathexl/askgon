@@ -98,22 +98,18 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
         </div>
         <div class="row">
         <input type="hidden" name="tags" v-model="newtags">
-
         <input type="checkbox" name="question" id="question" value="true">
           <label for="question" style="margin-top: 5px;
     float: left;margin-left:5px;margin-right:10px;"> This is a Question</label>
-
         <input type="checkbox" name="anonymous" id="anonymous" value="false">
         <label for="anonymous" style="margin-top: 5px;
         float: left;margin-left:5px;"> Anonymous Post</label>
-
         <input type="submit" value="POST TO PUBLIC">
         </div>
       </form>
     </div>
-
     <h1>@{{chosen.title}} <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span></h1>
-    <h2>by <span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></h2>
+    <h2>by <b><span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></b></h2>
     <div class="row" style="margin-left:15px;margin-bottom:4px;">
     <div class="tag" v-for="tag in chosen.tags" v-on:click="tagsearch(tag)">
       #@{{tag}}
@@ -137,7 +133,6 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
         <textarea placeholder="Title of Post" name="content" class="answer_content"></textarea>
         <div class="result answer_popup" style="display:none;"></div>
       </form>
-
     </div>
     <div class="answer" v-for="answer in answers">
       <div style="background-image:url('/profile.png');" class="image"></div>
@@ -147,10 +142,7 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
       </div>
       <div class="stars" v-on:click="vote(answer.id)" v-if="answer.voted != true" style="cursor:pointer;"><i class="fa fa-star"></i> @{{answer.vote}}</div>
       <div class="stars" v-else style="background-color:gold;color:white;"><i class="fa fa-star"></i> @{{answer.vote}}</div>
-
       <p>@{{answer.content}}</p>
-
-
             <div class="answer" v-for="subanswer in answer.subanswers" style="margin-bottom:2px;marign-top:2px;">
               <div style="background-image:url('/profile.png');" class="image"></div>
               <div class="author" style="left:55px;">Answered by @{{subanswer.name}}
@@ -170,12 +162,8 @@ Pass the link to any students to access the class. Password: <span>{{$section->p
                 <textarea placeholder="Title of Post" name="content" v-model="answer.response" class="answer_content"></textarea>
                 <div class="result answer_popup" style="display:none !important;"></div>
               </form>
-
             </div>
     </div>
-
-
-
   </div>
 </section>
 <script>
