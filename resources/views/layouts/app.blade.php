@@ -25,7 +25,7 @@
 <body>
 
 <header class="colored">
-  <a href="/"><img src="/askgon.png"></a>
+  <a href="/"><img src="/postrium_white.png"></a>
   <div class="rightlinks">
     @if(!Auth::user())
     <a href="/register">Sign Up</a>
