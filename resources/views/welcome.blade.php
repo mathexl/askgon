@@ -1,5 +1,6 @@
 
 <link rel="stylesheet" href="css/font-awesome.min.css">
+<title>Postrium - Open Source Q and A</title>
 <style>
 body{
   margin:0px;
