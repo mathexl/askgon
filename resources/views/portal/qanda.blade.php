@@ -120,7 +120,7 @@ You have admin access to this forum.
     <h1>@{{chosen.title}} <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span></h1>
     <h2>by <b><span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></b></h2>
     <div class="row" style="margin-left:15px;margin-bottom:4px;">
-    <div class="tag" v-for="tag in chosen.tags" v-on:click="tagsearch(tag)">
+    <div class="tag" v-for="tag in chosen.tags" track-by="$index" v-on:click="tagsearch(tag)">
       #@{{tag}}
     </div>
     </div>
