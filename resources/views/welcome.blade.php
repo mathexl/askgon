@@ -75,7 +75,7 @@ header > img{
 
 section[name="infobar"]{
   width:100%;
-  background-color:#eeeeee;
+  background-color:#000000;
   height:auto;
   display:inline-block;
   position:relative;
@@ -99,7 +99,7 @@ section[name="infobar"] > .triad > i{
   margin-left:10%;
   margin-right:10%;
   font-size:36px;
-  color:#52BEFB;
+  color:white;
   text-align: center;
 }
 section[name="infobar"] > .triad > h1{
@@ -107,7 +107,7 @@ section[name="infobar"] > .triad > h1{
   margin-left:10%;
   margin-right:10%;
   font-size:16px;
-  color:#52BEFB;
+  color:white;
   text-align: center;
   font-family: "Lato", Arial, Tahoma;
 }
@@ -117,11 +117,11 @@ section[name="infobar"] > .triad > h2{
   margin-left:10%;
   margin-right:10%;
   font-size:12px;
-  color:#999;
+  color:white;
   font-family: "Lato", Arial, Tahoma;
 }
 section[name="infobar"] > .triad > h2 > a{
-  color:#52DEFB;
+  color:#BBB;
 }
 a{
   text-decoration: none;
@@ -180,4 +180,5 @@ header > .rightlinks > a{
     </div>
 
   </section>
+  @include('footer')
 </body>
