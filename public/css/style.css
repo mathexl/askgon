@@ -214,6 +214,7 @@ section[name="qanda"] .question{
   display:inline-block;
   line-height:18px;
   float:left;
+  overflow: hidden;
 
 }
 

@@ -140,7 +140,7 @@ class MainController extends Controller
         }
         $answers = DB::table('answers')->where("question","=",$post->id)->get();
         foreach($answers as $answer){
-          //Iterate through the answers of the for each block. 
+          //Iterate through the answers of the for each block.
           $subanswers = DB::table('answers')->where("head","=",$answer->id)->get();
           if($answer->voted == ""){
             $answer->voted = "[]";
@@ -174,7 +174,7 @@ class MainController extends Controller
         $post->active = true;
         $post->matchness = 1;
       }
-      return $posts;
+      return array_reverse($posts->toArray());
     }
 
 
@@ -468,6 +468,7 @@ class MainController extends Controller
         $section->save();
       }
       $posts = $this->getposts($section->id);
+
       if($this->inclass($section)){
         return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false]);
       } else if($this->adminclass($section)) {

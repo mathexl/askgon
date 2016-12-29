@@ -207,7 +207,7 @@ $( document ).ready(function() {
 });
 
 //VUE
-var tours = new Vue({
+var qanda = new Vue({
   el: '#qanda',
   data: {
     posts: {!!json_encode($posts)!!},
@@ -226,6 +226,7 @@ var tours = new Vue({
         this.posts[i].tags = JSON.parse(this.posts[i].tags);
       }
     }
+
   },
   computed: {
     posts_meta: function() {
@@ -249,7 +250,6 @@ var tours = new Vue({
       this.searchtag = '';
     },
     choose: function (post) {
-      console.log(post);
       $(".main").show();
 
       tobechosen = post;
@@ -495,11 +495,10 @@ var tours = new Vue({
           url: base_url + "/class/" + {{$section->id}} + "/deleteanswer",
           data: {'id': sub_id, 'question': this.chosen.id},
           success: function(data){
-            console.log(data);
-            console.log("Done!");
 
           },
           finished: function(data){
+
           }
       });
       for(i = 0; i < this.chosen.answers.length; i++){
@@ -569,8 +568,7 @@ var tours = new Vue({
 });
 
 window.setInterval(function(){
-  tours.tick();
-  console.log("ticking!!");
+  qanda.tick();
 }, 1000);
 </script>
 <!-- Scripts -->
