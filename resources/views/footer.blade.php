@@ -61,6 +61,6 @@ footer > .col > a{
     <a href="http://github.com/mathexl/askgon">Features</a>
     <a href="http://github.com/mathexl/askgon">Data Policy</a>
     <a href="http://github.com/mathexl/postrium">Open Source Code</a>
-    <a href="http://github.com/mathexl/askgon">Open Source License</a>
+    <a href="https://opensource.org/licenses/CDDL-1.0">Open Source License</a>
   </div>
 </footer>
