@@ -171,12 +171,13 @@ header > .rightlinks > a{
     <div class="triad">
       <i class="fa fa-database" aria-hidden="true"></i>
       <h1>We Won't Sell Your Data</h1>
-      <h2>Postrium will not sell your data -- we value your privacy and personal security.</h2>
+      <h2>Postrium will not sell your data -- we value your privacy and personal security.
+        Read our <a href="/datapolicy">data policy</a>.</h2>
     </div>
     <div class="triad">
       <i class="fa fa-fighter-jet" aria-hidden="true"></i>
       <h1>Fast and Easy to Set Up</h1>
-      <h2>Signing up for a class on Postrium takes under a minute and is easy to do.</h2>
+      <h2>Signing up or creating a forum on Postrium takes under a minute. </h2>
     </div>
 
   </section>

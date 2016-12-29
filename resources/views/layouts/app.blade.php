@@ -40,5 +40,6 @@
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
+    @include('footer')
 </body>
 </html>

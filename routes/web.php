@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/datapolicy', function () {
+    return view('datapolicy');
+});
+
 Route::post('/class/{id}/answerit','MainController@answerit');
 Route::post('/class/{id}/subanswer','MainController@subanswer');
 Route::post('/class/{id}/deleteanswer','MainController@deleteanswer');
