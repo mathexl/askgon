@@ -1,6 +1,8 @@
 Postrium is an open source Q and A online platform optimized for classrooms and organized groups.
 Postrium utilizes the Laravel Framework with Vue.JS. To get the site running:
 
+!("public/sshot.png")["public/sshot.png"]
+
 1) Install composer.<br>
 2) composer install<br>
 3) composer update<br>
