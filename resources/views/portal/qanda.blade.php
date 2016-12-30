@@ -88,7 +88,9 @@ You have admin access to this forum.
     <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="(post.matchness > 0 && !post.archived && !showarchived) || (showarchived == true && post.archived == true && post.matchness > 0)"  v-bind:class="{ 'chosen': chosen.id == post.id }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
-      <h3><span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp <i class="fa fa-comment"></i> @{{post.count}}</h3>
+      <h3><span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp <i class="fa fa-comment"></i> @{{post.count}}
+      <span style="float:right;color:#666;margin-right:3px;"> @{{post.diff}} </span>
+      </h3>
     </div>
   </div>
 

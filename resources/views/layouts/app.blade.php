@@ -36,7 +36,9 @@
     @endif
   </div>
 </header>
+        <div style="min-height:100vh;">
         @yield('content')
+        </div>
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>

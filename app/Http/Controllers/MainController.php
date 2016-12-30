@@ -14,6 +14,7 @@ use Auth;
 use App\Post;
 use App\Answer;
 use DB;
+use Carbon\Carbon;
 
 class MainController extends Controller
 {
@@ -137,6 +138,10 @@ class MainController extends Controller
         if($post->anonymous != true){
           //add only when not anonymous
           $post->name = User::find($post->owner)->name;
+        }
+        $post->diff = Carbon::parse($post->created_at)->diffForHumans();
+        if(strpos($post->diff, "second") > 0){
+          $post->diff = "a few seconds ago";
         }
         $answers = DB::table('answers')->where("question","=",$post->id)->get();
         foreach($answers as $answer){
