@@ -413,7 +413,7 @@ class MainController extends Controller
           $question->save();
         }
       }
-      return "hello";
+      return "success";
     }
 
     public function deletequestion(Request $request, $id){
@@ -431,7 +431,45 @@ class MainController extends Controller
         }
       }
       $this->resetsemaphore($section);
-      return "hello";
+      return "success";
+    }
+
+    public function archivequestion(Request $request, $id){
+      $user = Auth::user();
+      if($user==null)
+      {
+        return redirect("/login");
+      }
+      $section = Section::find($id);
+      $this->checksemaphore($section);
+      if($this->hallpass($section)){
+        $question = Post::find($request->question);
+        if($question->owner == $user->id || $this->adminclass($section)){
+          $question->archived = true;
+          $question->save();
+        }
+      }
+      $this->resetsemaphore($section);
+      return "success";
+    }
+
+    public function unarchivequestion(Request $request, $id){
+      $user = Auth::user();
+      if($user==null)
+      {
+        return redirect("/login");
+      }
+      $section = Section::find($id);
+      $this->checksemaphore($section);
+      if($this->hallpass($section)){
+        $question = Post::find($request->question);
+        if($question->owner == $user->id || $this->adminclass($section)){
+          $question->archived = false;
+          $question->save();
+        }
+      }
+      $this->resetsemaphore($section);
+      return "success";
     }
 
     public function notsolved(Request $request, $id){
@@ -448,7 +486,7 @@ class MainController extends Controller
           $question->save();
         }
       }
-      return "hello";
+      return "success";
     }
 
     public function qanda($id)

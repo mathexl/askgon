@@ -159,7 +159,7 @@ header > .rightlinks > a{
   <section name="main">
     <h1>Q and A for your classroom</h1>
     <h2>A question and answer web platform for your classroom or group, free and open source</h2>
-    <img src="/sshot1.png">
+    <img src="/sshot2.png">
     <h3>a project by <a href="https://www.parsegon.com"><img src="parsegon.png"></a></h3>
   </section>
   <section name="infobar">

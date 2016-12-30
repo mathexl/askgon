@@ -80,8 +80,12 @@ You have admin access to this forum.
       <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
     </div>
+    <div class="displayoptions">
+      <a v-on:click="showarchived = false" v-bind:class="{ chosen: showarchived == false }">Unarchived</a>
+      <a v-on:click="showarchived = true" v-bind:class="{ chosen: showarchived == true }">Archived</a>
+    </div>
     <div class="searchnotice" v-show="searchtag != ''" ><i class="fa fa-close" v-on:click="notag()"></i> Posts marked with #@{{searchtag}}</div>
-    <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="post.matchness > 0"  v-bind:class="{ 'chosen': chosen.id == post.id }">
+    <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="(post.matchness > 0 && !post.archived && !showarchived) || (showarchived == true && post.archived == true && post.matchness > 0)"  v-bind:class="{ 'chosen': chosen.id == post.id }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
       <h3><span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp <i class="fa fa-comment"></i> @{{post.count}}</h3>
@@ -117,7 +121,12 @@ You have admin access to this forum.
         </div>
       </form>
     </div>
-    <h1>@{{chosen.title}} <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span></h1>
+    <h1>@{{chosen.title}}
+    <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span>
+    <span @if(!$admin) v-if="chosen.owner == {{$user->id}} && !chosen.archived" @else v-if="!chosen.archived" @endif v-on:click="archive()" class="archive"><i class="fa fa-archive"></i> Archive</span>
+    <span @if(!$admin) v-if="chosen.owner == {{$user->id}} && chosen.archived" @else v-if="chosen.archived" @endif v-on:click="unarchive()" class="archive"><i class="fa fa-globe"></i> Unarchive</span>
+
+    </h1>
     <h2>by <b><span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></b></h2>
     <div class="row" style="margin-left:15px;margin-bottom:4px;">
     <div class="tag" v-for="tag in chosen.tags" track-by="$index" v-on:click="tagsearch(tag)">
@@ -214,6 +223,7 @@ var qanda = new Vue({
     chosen: '',
     answers: '',
     search: '',
+    showarchived: false,
     newtag: '',
     tags: [],
     searchtag: '',
@@ -563,6 +573,41 @@ var qanda = new Vue({
           }
       });
       window.location.reload();
+    },
+    archive: function () {
+      while(this.semaphore() != false) {};
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/class/" + {{$section->id}} + "/archive",
+          data: {"question":this.chosen.id},
+          success: function(data){
+          }
+      });
+      this.chosen.archived = true;
+
+    },
+    unarchive: function () {
+      while(this.semaphore() != false) {};
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/class/" + {{$section->id}} + "/unarchive",
+          data: {"question":this.chosen.id},
+          success: function(data){
+
+          }
+      });
+      this.chosen.archived = false;
+
     }
   }
 });

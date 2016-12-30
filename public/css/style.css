@@ -170,6 +170,26 @@ section[name="qanda"] > .questions > .mainbar{
   padding-bottom:5px;
 }
 
+section[name="qanda"] > .questions > .displayoptions {
+    display: inline-block;
+    width: 100%;
+    background-color: white;
+    text-align: left;
+    font-size: 11px;
+    border-bottom:1px #ddd solid;
+    padding: 3px;
+    /* font-family: "Lato"; */
+}
+
+section[name="qanda"] > .questions > .displayoptions > a{
+  margin-left:5px;
+  cursor: pointer;
+}
+
+section[name="qanda"] > .questions > .displayoptions > a.chosen{
+  font-weight:bold;
+}
+
 section[name="qanda"] > .questions > .mainbar > .button{
   padding:2px;
   border:1px #ddd solid;
@@ -662,4 +682,14 @@ section[name="admin"] > span{
   border-radius: 2px;
   background-color:#eeeeee;
   font-family: "Consolas", "Monospace", "Arial";
+}
+
+.archive{
+  padding-top: 2px !important;
+color: #444 !important;
+border-color: #444 !important;
+width: auto !important;
+margin-top:1px !important;
+padding: 3px 6px;
+font-family: "Lato";
 }

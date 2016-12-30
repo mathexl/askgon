@@ -1,5 +1,5 @@
-Askgon is an open source Q and A online platform optimized for classrooms and organized groups.
-Askgon utilizes the Laravel Framework with Vue.JS. To get the site running:
+Postrium is an open source Q and A online platform optimized for classrooms and organized groups.
+Postrium utilizes the Laravel Framework with Vue.JS. To get the site running:
 
 1) Install composer.<br>
 2) composer install<br>
