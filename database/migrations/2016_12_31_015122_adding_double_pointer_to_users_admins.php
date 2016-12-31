@@ -15,8 +15,8 @@ class AddingDoublePointerToUsersAdmins extends Migration
     {
         Schema::table('sections', function (Blueprint $table) {
             //
-            $table->mediumText("admins")->default("[]");
-            $table->mediumText("users")->default("[]");
+            $table->mediumText("admins");
+            $table->mediumText("users");
         });
     }
 
