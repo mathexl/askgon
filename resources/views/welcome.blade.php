@@ -8,7 +8,7 @@ body{
 }
 section[name="main"]{
   width:100%;
-  min-height: calc(100vh - 0px);
+  min-height: calc(100vh - 30px);
   display:inline-block;
   position: relative;
   background: -moz-linear-gradient(-45deg, #52AEFB 0%, #52DEFB 99%); /* FF3.6-15 */
@@ -38,8 +38,8 @@ section[name="main"] > h2{
 }
 
 section[name="main"] > h2 + img{
-width: 65%;
-margin-left: 17.5%;
+width: 55%;
+margin-left: 22.5%;
 border-radius: 5px;
 }
 
