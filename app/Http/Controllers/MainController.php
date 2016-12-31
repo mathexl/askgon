@@ -389,7 +389,7 @@ class MainController extends Controller
         return false;
       }
 
-      if($section->abuser == $user->id && (time() - $section->abuser_time) < (6 * $section->abuser_count)){
+      if($section->abuser == $user->id && (time() - $section->abuser_time) < (8 * $section->abuser_count)){
         //checking if current owner is a potential abuser
         //and has not waited enough time measured by the time waited under 6 * abuse multiplier.
         return false; //you don't get the key, womp womp
