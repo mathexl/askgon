@@ -195,7 +195,7 @@ class MainController extends Controller
         Voted: Boolean to determine if the post has been voted already by current user
         Count: Number of votes currently on the post.
         Answers: Array of Object Answers that have their own meta data components:
-            || Voted: If the answer has been voted by the current user.
+            || Voted: If the answer has been voted by the current user. Stored as array of all users
             || Count: Number of votes on that answer
             || Content: The info of that answer
             || Name: Name of Person who wrote that answer/owns it (stored as ID)
@@ -228,30 +228,109 @@ class MainController extends Controller
           }
           foreach($subanswers as $subanswer){
             if($subanswer->voted == ""){
-              $subanswer->voted = "[]";
+              $subanswer->voted = "[]"; //set default voted array
             }
-            $voted = json_decode($subanswer->voted);
+            $voted = json_decode($subanswer->voted); // retract
             if(in_array($user->id, $voted)){
-              $subanswer->voted = true;
+              $subanswer->voted = true; //voted converts to boolean if the user voted
             } else {
               $subanswer->voted = false;
             }
             $owner = User::find($subanswer->owner);
-            $subanswer->name = $owner->name;
+            $subanswer->name = $owner->name; //add name to the subanswer
           }
           $answer->subanswers = json_encode($subanswers);
           $owner = User::find($answer->owner);
-          $answer->name = $owner->name;
+          $answer->name = $owner->name; //add name to the root answer
         }
         $count = count($answers);
         $post->count = $count;
-        $post->answers = json_encode($answers);
+        $post->answers = json_encode($answers); //convert answers to JSOn
         $post->active = true;
         $post->matchness = 1;
       }
       return array_reverse($posts->toArray());
     }
+    /*
+                                 .--------.
+                                / .------. \
+                               / /        \ \
+                               | |        | |
+                              _| |________| |_
+                            .' |_|        |_| '.
+                            '._____ ____ _____.'
+                            |     .'____'.     |
+                            '.__.'.'    '.'.__.'
+                            '._I got the key$_.'
+                            |   '.'.____.'.'   |
+                            '.____'.____.'____.'
+                            '.________________.'
+                                   locks
+    */
+    /*************************************************************************/
+    /***************************** SEMAPHORE *********************************/
+    /*************************************************************************/
+    /*
+    Postrium utilizes a semaphore (signal) to gaurantee elegant synchronousness
+    through asynchrousness transactions. Every section has a boolean semaphore
+    and an integer that is the Unicode timestamp of the last set semaphore. Because
+    the semaphore is constantly interacted with, it was sensible to utilize a timestamp
+    than a more flushed out Carbon object to minimize server overhead.
 
+    The semaphore ($section->semaphore) must be called and held by any user that
+    seeks to modify a sections Q and A data. Modifications may be to the voting
+    counts, comment section (answers + subanswers), or modifications to the other
+    features. Boolean features such as "Mark as Solved" as only executed by a sole user (owner)
+    and aren't a dependency to other features and thus are agnostic of the semaphore
+    code.
+
+    When a semaphore is called, it is set to the user's ID and the timestamp is
+    recorded. This is usually made in an AJAX call made by the browser prior to
+    modifying the Q and A data (in another call). The server returns tot he browser
+    whether acquiring the semaphore was successful or not. If it is not successful,
+    the user doesn't have the right to access yet, and the Javascript spins (while())
+    until the semaphore can be acquired. This is the only justifiable approach over
+    a queue because a user should see changes in the Q and A data prior to modifying
+    the Q and A data which is one big JSON blob.
+
+    Once a semaphore is acquired, no other user can acquire it until the following program
+    disbands the semaphore after altering the data. This is a tricky prior because
+    a browser could hypothetically grab the semaphore, lose internet, and fail to
+    release it / follow it up. Therefore, when a process tries to grab a semaphore, it is
+    either (a) successful because no one owns it or (b) steals it because the browser
+    failed to respond fast enough (2 seconds). This prevents the off case of someone
+    stealing the lock into perpetuity.
+
+    -------------------------- Abuser Prevention -------------------------------------
+
+    $section ->
+        -> abuser
+        -> abuser_time
+        -> abuser_count
+        -> abuser_hitlist
+        -> abuser_prev
+
+    There is a vulnerability of someone nefariously calling semaphore() through the POST
+    request to always exercise the 2 second window. To prevent this vulnerability, the
+    semaphore is set with an "abuser" and "abuser_time" data point that stops an user
+    who exhausted the 2 seconds to retrieve the semaphore until another 8 seconds have
+    passed. Further, if the abuser continues to try to take the semaphore (as every 2
+    seconds stolen out of a 8 second window kills the service for literally 20% of the time),
+    the "abuser_count" section variable increments, multiplying the "wait time" each time
+    of a subsequent abuse.
+
+    The problem with this vulnerability is escalated if the abuser sets up multiple accounts
+    in the class and constantly has them alternate, thus resetting the abuser, and abuser_count
+    each time. Whilst the administrator has a natural check on this by allowing only one
+    student one account, it is not a perfect solution. Therefore, in order to minimize the
+    complexity of the abuser, abuser_time, and abuser_count variables, a 4th and final
+    protective variable (abuser_hitlist) is implemented that is a JSON array of abusive accounts that
+    automate the wait time to start at a random number between 6 and 18 seconds which destroys
+    any chance of a coordinated attacker properly scheduling alternation. abuser_hitlist is only
+    cross-checked after the first offense and references abuser_prev (the abuser before the last)
+    as a trigger
+    -------------------------- End Abuser Prevention ---------------------------------
+    */
 
     private function checksemaphore($section){
       $user = Auth::user();
@@ -267,9 +346,41 @@ class MainController extends Controller
       $section->save();
     }
 
+    /*** dealing with possible attack ***/
+    private function semaphorepolice($section){
+      $suspect = $section->semaphore; //suspected hogger
+      $hitlist = json_decode($section->abuser_hitlist); // list of past abusers
+
+      if($section->abuser == $suspect || $section->abuser_prev == $suspect){ //repeat offense or alternator
+        $section->abuser_count++;
+        $section->abuser_time = time();
+        $hitlist[] = $section->abuser; //adding to hitlist
+        $section->abuser_hitlist = json_encode($hitlist);
+        $section->save();
+        return true;
+      } else { //not the last abuser
+        if(in_array($suspect, $hitlist)){ //past abuser
+          $section->abuser = $suspect;
+          $section->abuser_count = 4; //because repeat abuser, start count into future
+          $section->abuser_time = time();
+          $section->save();
+        } else { //first offense, no hitlist since potentially innocent.
+          $section->abuser_prev = $section->abuser; //setting prev user for cross checking.
+          $section->abuser = $suspect; //new abuser
+          $section->abuser_count = 1; //starting count
+          $section->abuser_time = time();
+          $section->save();
+        }
+      }
+      return true;
+    }
+
     //synchronousness
     public function semaphore(Request $request){
       $section = Section::find($request->section);
+      if(!$section){
+        return false;
+      }
       $user = Auth::user();
       if(!$user){
         return false;
@@ -277,11 +388,25 @@ class MainController extends Controller
       if(!$this->hallpass($section)){
         return false;
       }
-      if($section->semaphore > 0 && time() - $section->semaphore_created < 4){ //4 second max hold time.
+
+      if($section->abuser == $user->id && (time() - $section->abuser_time) < (6 * $section->abuser_count)){
+        //checking if current owner is a potential abuser
+        //and has not waited enough time measured by the time waited under 6 * abuse multiplier.
+        return false; //you don't get the key, womp womp
+      }
+
+      if($section->semaphore > 0 && time() - $section->semaphore_created < 2){
+        //2 second max hold time.
         // this prevents some user from quitting the browser after acquiring the lock and then
         // failing to follow through with the action that resets the semaphore
         return json_encode(false);
       } else {
+
+        if(time() - $section->semaphore_created >= 2){
+            /***** track and set abuser ****/
+            $this->semaphorepolice($section);
+        }
+
         $section->semaphore = $user->id; // setting lock
         $section->semaphore_created = time();
         $section->save();
@@ -360,6 +485,7 @@ class MainController extends Controller
       $class->gates = json_encode([array(), array(), array()]); //students, TAs, admins
       $class->admins = json_encode(array());
       $class->users = json_encode(array());
+      $class->abuser_hitlist = json_encode(array());
       $class->save();
       return redirect("/home");
     }
