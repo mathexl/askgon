@@ -60,4 +60,7 @@ class HomeController extends Controller
         }
         return view('home')->with(["classes" => $classes, "joined" => $s]);
     }
+
+
+
 }

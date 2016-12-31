@@ -31,6 +31,8 @@ Route::post('/class/{id}/unarchive','MainController@unarchivequestion');
 Route::post('/class/{id}/settings_update','MainController@settings_update');
 Route::post('/class/{id}/kickout','MainController@kickout');
 
+Route::post('/loggedin','MainController@loggedin');
+
 
 Route::post('/class/{id}/vote','MainController@vote');
 Route::get('/class/{id}','MainController@qanda');

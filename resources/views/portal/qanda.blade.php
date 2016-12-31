@@ -787,6 +787,26 @@ var qanda = new Vue({
       });
       this.chosen.archived = false;
 
+    },
+    loggedin: function () {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/loggedin",
+          data: {},
+          success: function(data){
+            if(data == false){
+              window.location.reload();
+            }
+          },
+          error: function (jqXHR, json) {
+              window.location.reload();
+          }
+      });
     }
   }
 });
@@ -794,6 +814,11 @@ var qanda = new Vue({
 window.setInterval(function(){
   qanda.tick();
 }, 5000);
+
+window.setInterval(function(){
+  qanda.loggedin();
+}, 10000);
+
 </script>
 <!-- Scripts -->
 <script src="/js/app.js"></script>

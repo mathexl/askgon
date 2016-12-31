@@ -668,4 +668,11 @@ class MainController extends Controller
       return view("404");
     }
 
+    public function loggedin(Request $request){
+      if(!Auth::check()){
+        return false;
+      }
+      return true;
+    }
+
 }
