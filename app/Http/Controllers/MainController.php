@@ -4,6 +4,8 @@ main controller with 90% of the code
 Postrium is managed and run by Parsegon, Inc.
 Direct any security inquiries or questions
 to mathew@parsegon.com
+
+All comments current authored by Mathew Pregasen
 ****************************************/
 namespace App\Http\Controllers;
 
@@ -26,14 +28,18 @@ class MainController extends Controller
     Postrium's current version does not permit read only
     or write only permissions.                         */
     /***************************************************/
-    private function gatekeeper(Section $section, $type){
+    private function gatekeeper(Section $section, $type, User $u = null){
       /*************************************************
       Checking user auth and returning error if not.
       *************************************************/
-      $user = Auth::user();
-      if($user==null)
-      {
-        return redirect("/login");
+      if($u == null){
+        $user = Auth::user();
+        if($user==null)
+        {
+          return redirect("/login");
+        }
+      } else {
+        $user = $u;
       }
       /*************************************************
       Gates 0, 1 control access permissions:
@@ -63,13 +69,19 @@ class MainController extends Controller
       return false;
     }
 
-    private function inclass(Section $section){
+    private function inclass(Section $section, User $u = null){
       //call to gatekeeper checking gate for students
+      if($u != null){
+        return $this->gatekeeper($section, 0, $u);
+      }
       return $this->gatekeeper($section, 0);
     }
 
-    private function adminclass(Section $section){
+    private function adminclass(Section $section, User $u = null){
       //call to gatekeeper checking gate for admins
+      if($u != null){
+        return $this->gatekeeper($section, 1, $u);
+      }
       return $this->gatekeeper($section, 1);
     }
 
@@ -80,22 +92,80 @@ class MainController extends Controller
     two gates and ownership possibility.
     */
     /***************************************************/
-    private function hallpass(Section $section){
+    private function hallpass(Section $section, User $u = null){
       $user = Auth::user();
       if($user==null)
       {
       return redirect("/login");
       }
-      if($user->id == $section->owner){
+
+      if($user->id == $section->owner || $u == $section->owner){
       return true;
       }
-      if($this->inclass($section)){
+      if($this->inclass($section, $u)){
       return true;
       }
-      if($this->adminclass($section)){
+      if($this->adminclass($section, $u)){
       return true;
       }
       return false;
+    }
+
+    /***************** get admins **********************/
+    /*
+    Get admins is a function only allowed to the owner that
+    returns all the admins for a section. To remove the O(n)
+    complexity of searching the list of all users in the database,
+    the sections model contains a json_encoded list of admin
+    id's and this function cross checks the admin has correct
+    gate access for safe code reasons solely.
+
+    The double pointer is useful so that retrieving the section
+    access on the dashboard computes in O(1) time as well.
+    */
+    /***************************************************/
+    private function getadmins($id){
+      $section = Section::find($id);
+      if(!$section->admins){$section->admins = "[]"; $section->save();}
+      $admins = json_decode($section->admins);
+      $return = [];
+      foreach($admins as $admin){
+        $a = User::find($admin);
+        $temp = new User();
+        if($this->adminclass($section, $a)){
+          /**** Transfer only necessary data ****/
+          $temp->id = $a->id;
+          $temp->name = $a->name;
+          $temp->postcount = 0;
+          $return[] = $temp;
+        }
+      }
+      return $return;
+    }
+
+
+    /***************** get users **********************/
+    /*
+    Same as before for users, conditionally allowed to admins
+    */
+    /***************************************************/
+    private function getusers($id){
+      $section = Section::find($id);
+      if(!$section->users){$section->users = "[]"; $section->save();}
+      $users = json_decode($section->users);
+      $return = [];
+      foreach($users as $user){
+        $a = User::find($user);
+        $temp = new User();
+        if($this->inclass($section, $a)){
+          /**** Transfer only necessary data ****/
+          $temp->id = $a->id;
+          $temp->name = $a->name;
+          $temp->postcount = 0;
+          $return[] = $temp;
+        }
+      }
+      return $return;
     }
 
 
@@ -241,11 +311,32 @@ class MainController extends Controller
         $gates = [array(), array(), array()]; //students, TAs, admins
       }
 
+      if($section->admins){
+        $admins = json_decode($section->admins);
+      } else {
+        $admins = array();
+      }
+
+      if($section->users){
+        $users = json_decode($section->users);
+      } else {
+        $users = array();
+      }
+
       if($request->password == $section->password){
         $gates[0][] = $key; // student pass
+        if(!in_array($user->id, $users)){
+          $users[] = $user->id;
+        }
       } else {
         $gates[1][] = $key; // instructor pass
+        if(!in_array($user->id, $admins)){
+          $admins[] = $user->id;
+        }
       }
+
+      $section->users = json_encode($users);
+      $section->admins = json_encode($admins);
 
       $keys[] = $key;
       $user->keys = json_encode($keys);
@@ -494,14 +585,59 @@ class MainController extends Controller
       return "success";
     }
 
+    public function settings_update(Request $request, $id){
+      $user = Auth::user();
+      if($user==null) { return NULL; } //permissions expired
+      $section = Section::find($id);
+      if($section->owner != $user->id){ return NULL; } //incorrect permissions
+      $section->anon_admin = $request->anon_admin;
+      $section->anon_user = $request->anon_user;
+      $section->archive_admin = $request->archive_admin;
+      $section->delete_admin = $request->delete_admin;
+      $section->save();
+    }
+
+    public function kickout(Request $request, $id){
+      $section = Section::find($id);
+      $user = Auth::user();
+
+      if($user->id != $section->owner && $user->id != $request->user){
+        return null;
+      }
+
+      $u = User::find($request->user);
+      if(!$u){
+        return null;
+      }
+      if(!$this->hallpass($section, $u)){
+        return null;
+      }
+
+      $gates = json_decode($section->gates);
+      $keys = json_decode($u->keys);
+      if(!$keys){
+        $keys = array();
+      }
+      $count = 0;
+      foreach($keys as $key){
+        if(in_array($key,$gates[0]) || in_array($key,$gates[1])){
+          $keys[$count] = "";
+        }
+        $count++;
+      }
+      $u->keys = json_encode($keys);
+      $u->save();
+    }
+
     public function qanda($id)
     {
       $user = Auth::user();
-	  if($user==null)
-	  {
+  	  if($user==null)
+  	  {
 		  return redirect("/login");
-	  }
+	    }
       $section = Section::find($id);
+
       if(!$section->password){
         $section->password = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
         $section->save();
@@ -511,11 +647,19 @@ class MainController extends Controller
         $section->save();
       }
       $posts = $this->getposts($section->id);
-
+      $owner = ($section->owner == $user->id);
+      $admins = [];
+      $users = [];
+      if($owner){
+        $admins = $this->getadmins($section->id);
+        $users = $this->getusers($section->id);
+      }
       if($this->inclass($section)){
-        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false]);
+        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false, "owner" => $owner,
+      "admins" => $admins, "users" => $users]);
       } else if($this->adminclass($section)) {
-        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => true]);
+        return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => true, "owner" => $owner,
+      "admins" => $admins, "users" => $users]);
       } else {
         return view("portal.register")->with(["section" => $section]);
       }

@@ -75,6 +75,61 @@ You have admin access to this forum.
 </section>
 @endif
 <section name="qanda" id="qanda">
+  <div class="overlay" v-show="settings == true" v-on:click="toggle_settings()"></div>
+  @if($owner)
+  <div class="settings">
+    <h1 v-on:click="toggle_settings()">Class Settings
+    <i class="fa fa-minus-square-o" aria-hidden="true" v-show="settings == true"></i>
+    <i class="fa fa-plus-square-o" aria-hidden="true" v-show="settings != true"></i>
+    </h1>
+    <div class="body" v-show="settings == true">
+      <div class="menu">
+        <div class="blocks" v-bind:class="{ chosen: tab == 0 }" v-on:click="tab = 0">GENERAL</div>
+        <div class="blocks" v-bind:class="{ chosen: tab == 1 }" v-on:click="tab = 1">ADMINS</div>
+        <div class="blocks" v-bind:class="{ chosen: tab == 2 }" v-on:click="tab = 2">USERS</div>
+      </div>
+      <div class="architecture" v-show="tab == 0">
+        <h1>Can Post Anonymously</h1>
+        <div class="options">
+          <div class="box" v-bind:class="{ chosen: anon_admin == 1 }" v-on:click="anon_admin_toggle()"></div>
+          <div class="label" v-on:click="anon_admin_toggle()">Admins</div>
+          <div class="box" v-bind:class="{ chosen: anon_user == 1 }"  v-on:click="anon_user_toggle()"></div>
+          <div class="label" v-on:click="anon_user_toggle()">Users</div>
+        </div>
+      </div>
+      <div class="architecture" v-show="tab == 0">
+        <h1>Admin Privileges</h1>
+        <div class="options">
+          <div class="box" v-bind:class="{ chosen: archive_admin == 1 }" v-on:click="archive_admin_toggle()"></div>
+          <div class="label" v-on:click="archive_admin_toggle()">Archive Posts</div>
+          <div class="box" v-bind:class="{ chosen: delete_admin == 1 }" v-on:click="delete_admin_toggle()"></div>
+          <div class="label" v-on:click="delete_admin_toggle()">Delete Posts</div>
+        </div>
+      </div>
+      <div class="architecture" v-show="tab == 1">
+        <br>
+        <p>The following people have administrative access to this class.</p>
+        <div class="user" v-for="admin in admins">
+          @{{admin.name}}
+          <i class="fa fa-trash" v-on:click="kickout(admin)"></i>
+
+        </div>
+      </div>
+      <div class="architecture" v-show="tab == 2">
+        <br>
+        <p>The following people have user but not administrative access to this class.</p>
+        <div class="user" v-for="user in users">
+          <span>@{{user.name}}</span>
+          <span v-if="user.postcount != 1">@{{user.postcount}} Posts</span>
+          <span v-else>@{{user.postcount}} Post</span>
+          <i class="fa fa-trash" v-on:click="kickout(user)"></i>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  @endif
   <div class="questions">
     <div class="mainbar">
       <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
@@ -116,17 +171,21 @@ You have admin access to this forum.
         <input type="checkbox" name="question" id="question" value="true">
           <label for="question" style="margin-top: 5px;
     float: left;margin-left:5px;margin-right:10px;"> This is a Question</label>
-        <input type="checkbox" name="anonymous" id="anonymous" value="false">
+        <input type="checkbox" name="anonymous" id="anonymous" value="false"
+        @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
+        >
         <label for="anonymous" style="margin-top: 5px;
-        float: left;margin-left:5px;"> Anonymous Post</label>
+        float: left;margin-left:5px;"
+        @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
+        > Anonymous Post</label>
         <input type="submit" value="POST TO PUBLIC">
         </div>
       </form>
     </div>
     <h1>@{{chosen.title}}
-    <span v-if="chosen.owner == {{$user->id}}" v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span>
-    <span @if(!$admin) v-if="chosen.owner == {{$user->id}} && !chosen.archived" @else v-if="!chosen.archived" @endif v-on:click="archive()" class="archive"><i class="fa fa-archive"></i> Archive</span>
-    <span @if(!$admin) v-if="chosen.owner == {{$user->id}} && chosen.archived" @else v-if="chosen.archived" @endif v-on:click="unarchive()" class="archive"><i class="fa fa-globe"></i> Unarchive</span>
+    <span @if(!$owner) v-if="chosen.owner == {{$user->id}} @if($admin) || delete_admin == 1 @endif" @endif v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span>
+    <span @if(!$owner) @if(!$admin) v-if="chosen.owner == {{$user->id}} && !chosen.archived" @else v-if="!chosen.archived && archive_admin == 1" @endif @else v-if="!chosen.archived" @endif v-on:click="archive()" class="archive"><i class="fa fa-archive"></i> Archive</span>
+    <span @if(!$owner) @if(!$admin) v-if="chosen.owner == {{$user->id}} && chosen.archived" @else v-if="chosen.archived && archive_admin == 1" @endif @else v-if="chosen.archived" @endif v-on:click="unarchive()" class="archive"><i class="fa fa-globe"></i> Unarchive</span>
 
     </h1>
     <h2>by <b><span v-if="chosen.name != '' && chosen.name">@{{chosen.name}}</span><span v-else>Anonymous</span></b></h2>
@@ -225,15 +284,35 @@ var qanda = new Vue({
     chosen: '',
     answers: '',
     search: '',
+    anon_admin: {!! json_encode($section->anon_admin) !!},
+    anon_user: {!! json_encode($section->anon_user) !!},
+    archive_admin: {!! json_encode($section->archive_admin) !!},
+    delete_admin: {!! json_encode($section->delete_admin) !!},
+    @if($owner)
+    // admin privileged data
+    settings: false,
+    admins: {!! json_encode($admins) !!},
+    users: {!! json_encode($users) !!},
+    // end of admin privileged data
+    @endif
     showarchived: false,
     newtag: '',
     tags: [],
+    tab: 0,
     searchtag: '',
     newtags: JSON.stringify([])
   },
   created: function () {
     for(i = 0; i < this.posts.length; i++){
       this.posts[i].active = true;
+      @if($owner)
+      for(j = 0; j < this.users.length; j++){
+          if(this.posts[i].owner == this.users[j].id){ this.users[j].postcount++; }
+      }
+      for(j = 0; j < this.admins.length; j++){
+          if(this.posts[i].owner == this.admins[j].id){ this.admins[j].postcount++; }
+      }
+      @endif
       if(this.posts[i].tags){
         this.posts[i].tags = JSON.parse(this.posts[i].tags);
       }
@@ -248,6 +327,104 @@ var qanda = new Vue({
     }
   },
   methods: {
+    @if($owner)
+    toggle_settings: function() {
+      if(this.settings == false){
+        this.settings = true;
+      } else {
+        this.settings = false;
+      }
+    },
+    settings_update: function() {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      content = $(".answer_content").val();
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/class/" + {{$section->id}} + "/settings_update",
+          data: {
+            'anon_admin': this.anon_admin,
+            'anon_user': this.anon_user,
+            'archive_admin': this.archive_admin,
+            'delete_admin': this.delete_admin
+          },
+          success: function(data){
+            console.log(data);
+          },
+          error: function (jqXHR, json) {
+              for (var error in json.errors) {
+                  console.log(json.errors[error]);
+              }
+          },
+          finished: function(data){
+
+          }
+      });
+    },
+    anon_admin_toggle: function() {
+        this.anon_admin = (this.anon_admin + 1) % 2;
+        this.settings_update();
+    },
+    anon_user_toggle: function() {
+        this.anon_user = (this.anon_user + 1) % 2;
+        this.settings_update();
+    },
+    archive_admin_toggle: function() {
+        this.archive_admin = (this.archive_admin + 1) % 2;
+        this.settings_update();
+    },
+    delete_admin_toggle: function() {
+        this.delete_admin = (this.delete_admin + 1) % 2;
+        this.settings_update();
+    },
+    kickout: function(user) {
+      console.log(user);
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/class/" + {{$section->id}} + "/kickout",
+          data: {
+            'user': user.id
+          },
+          success: function(data){
+
+
+
+          },
+          error: function (jqXHR, json) {
+              for (var error in json.errors) {
+                  console.log(json.errors[error]);
+              }
+          },
+          finished: function(data){
+
+          }
+      });
+
+      for(i = 0; i < this.admins.length; i++){
+        if(user.id == this.admins[i].id){
+          this.admins.splice(i, 1);
+          break;
+        }
+      }
+
+      for(i = 0; i < this.users.length; i++){
+        if(user.id == this.users[i].id){
+          this.users.splice(i, 1);
+          break;
+        }
+      }
+    },
+    @endif
     addtag: function(){
       t = this.newtag;
       this.tags.push(t);
@@ -616,7 +793,7 @@ var qanda = new Vue({
 
 window.setInterval(function(){
   qanda.tick();
-}, 1000);
+}, 5000);
 </script>
 <!-- Scripts -->
 <script src="/js/app.js"></script>

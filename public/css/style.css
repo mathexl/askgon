@@ -104,8 +104,10 @@ display: inline-block;
 
 section[name="qanda"]{
   width:100%;
-  height:calc(100vh - 60px);
+  height:calc(100vh - 100px);
   display:inline-block;
+  overflow: hidden;
+  position: relative;
   font-family: 'Raleway','Lato','Mukta Vaani';
 }
 
@@ -301,6 +303,7 @@ section[name="qanda"] > .main{
   display:inline-block;
   box-sizing: border-box;
   overflow:scroll;
+
   float:left;
   min-height:calc(100vh - 50px);
   position:relative;
@@ -692,4 +695,156 @@ width: auto !important;
 margin-top:1px !important;
 padding: 3px 6px;
 font-family: "Lato";
+}
+
+section[name="qanda"] > .overlay{
+  width:100%;
+  height:calc(100vh - 100px);
+  background-color:black;
+  opacity:.5;
+  z-index:120;
+  position: absolute;
+  bottom:0px;
+  left:0px;
+}
+
+section[name="qanda"] > .settings{
+  width:50%;
+  position:absolute;
+  bottom:0px;
+  right:10%;
+  background-color:white;
+  min-height: 50px;
+  z-index:121;
+  cursor: pointer;
+}
+
+section[name="qanda"] > .settings > h1{
+  width:100%;
+  height:50px;
+  background-color:black;
+  color:white;
+  margin-top:0px;
+  margin-bottom:0px;
+  font-family: "Lato";
+  font-size:14px;
+  padding:17px;
+  box-sizing: border-box;
+
+}
+
+section[name="qanda"] > .settings > h1 > i{
+  float:right;
+  font-size:18px;
+}
+
+section[name="qanda"] > .settings > .body{
+  width:100%;
+  margin-bottom:30px;
+  min-height: 60vh;
+}
+
+section[name="qanda"] > .settings > .body > .menu{
+  width:100%;
+  height: 60px;
+  border-bottom:1px #ddd solid;
+}
+
+section[name="qanda"] > .settings > .body > .menu > .blocks{
+  height:60px;
+  float:left;
+  width:auto;
+  box-sizing: border-box;
+  color:#52AEFB;
+  font-size:16px;
+  padding:17px 24px;
+}
+
+section[name="qanda"] > .settings > .body > .menu > .blocks.chosen{
+  border-bottom:4px #52AEFB solid;
+}
+
+section[name="qanda"] > .settings > .body > .architecture {
+  width:100%;
+  padding-left:24px;
+  box-sizing: border-box;
+  display: inline-block;
+  padding-right:24px;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .user{
+  width: 100%;
+  height: 58px;
+  box-sizing: border-box;
+  border: 3px #eee solid;
+  padding: 14px 12px;
+  border-radius: 3px;
+  margin-bottom:8px;
+  display: inline-block;
+
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .user > span{
+  width:33%;
+  float:left;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .user > i{
+  float: right;
+  font-size: 18px;
+  color: #ddd;
+  border: #ddd 2px solid;
+  border-radius: 2px;
+  width: 26px;
+  padding-top: 2px;
+  height: 26px;
+  margin-top: -1px;
+  text-align: center;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .user > i:hover{
+  opacity:.6;
+  cursor: pointer;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > h1{
+  font-size:18px;
+  margin-bottom: 10px;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .options{
+  font-size:14px;
+  width:100%;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .options > .box{
+  float:left;
+  border-radius:5px;
+  height: 19px;
+  width:19px;
+  border:3px #ddd solid;
+  line-height: 11.5px;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .options > .box.chosen{
+  background-color:#52AEFB;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .options > .box.chosen:before{
+  content: "\2713";
+  color:white;
+  margin-left:1px;
+  font-size:11px;
+  text-align:center;
+  width:100%;
+  display: inline-block;
+}
+
+section[name="qanda"] > .settings > .body > .architecture > .options > .label{
+  float:left;
+  color:#888;
+  font-size:14px;
+  margin-top:0px;
+  margin-right:14px;
+  height: 19px;
 }
