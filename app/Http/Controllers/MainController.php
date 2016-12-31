@@ -355,6 +355,8 @@ class MainController extends Controller
       $class->password = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
       $class->copassword = substr(strtoupper(md5(time() . mt_rand())), 0, 9);
       $class->gates = json_encode([array(), array(), array()]); //students, TAs, admins
+      $class->admins = json_encode(array());
+      $class->users = json_encode(array());
       $class->save();
       return redirect("/home");
     }
