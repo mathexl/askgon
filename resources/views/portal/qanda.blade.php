@@ -800,11 +800,11 @@ var qanda = new Vue({
           data: {},
           success: function(data){
             if(data == false){
-              window.location.reload();
+              //window.location.reload();
             }
           },
           error: function (jqXHR, json) {
-              window.location.reload();
+              //window.location.reload();
           }
       });
     }

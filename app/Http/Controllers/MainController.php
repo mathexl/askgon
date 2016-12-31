@@ -277,10 +277,13 @@ class MainController extends Controller
       if(!$this->hallpass($section)){
         return false;
       }
-      if($section->semaphore > 0){
+      if($section->semaphore > 0 && time() - $section->semaphore_created < 4){ //4 second max hold time.
+        // this prevents some user from quitting the browser after acquiring the lock and then
+        // failing to follow through with the action that resets the semaphore
         return json_encode(false);
       } else {
         $section->semaphore = $user->id; // setting lock
+        $section->semaphore_created = time();
         $section->save();
         return json_encode($this->getposts($section->id));
       }
@@ -672,7 +675,7 @@ class MainController extends Controller
       if(!Auth::check()){
         return false;
       }
-      return true;
+      return "hi";
     }
 
 }
