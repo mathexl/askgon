@@ -1,0 +1,144 @@
+.randomdiv {
+  margin:30px;
+  background-color:red;
+  width:50px;
+  height: 120px;
+}
+
+.playplace{
+  width:200px;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  min-height: 100px;
+  background-color:#222;
+  box-shadow: #444 2px 2px 2px;
+  border:1px #ddd solid;
+  padding:10px;
+  z-index:100000000000000000; /* Hopefully high enough */
+}
+
+.playplace > h1{
+  font-size:11px;
+  font-family: "Lato", Tahoma;
+  padding-left: 0px;
+  width:100%;
+  font-weight: 400;
+  box-sizing: border-box;
+  color:#ddd;
+  display:inline-block;
+}
+
+.playplace > .toggle{
+  width:40%;
+  float:left;
+  height: 20px;
+  border:2px #111 solid;
+}
+
+.playplace > .marriage{
+  width:24px;
+  height: 24px;
+  margin-left:2px;
+  margin-right:2px;
+  float:left;
+  border:2px #111 solid;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color:#333;
+
+}
+
+.playplace > .marriage:before{
+  content:'\1F517';
+  width:100%;
+  display:inline-block;
+  text-align: center;
+  font-size:11px;
+  color:#444;
+}
+
+.playplace > .marriage.active{
+  background-color:#bbb;
+}
+
+.playplace > .marriage.active:before{
+  color:#111 !important;
+}
+
+.playplace > .toggle > .arrows{
+  float:left;
+  height: 20px;
+  width:25px;
+  cursor: pointer;
+}
+
+.playplace > .toggle > .arrows > .uparrow{
+  width:25px;
+  height: 10px;
+  box-sizing: border-box;
+  border:#888 1px solid;;
+
+  border-bottom:#888 1px solid;;
+}
+
+.playplace > .toggle > .arrows > .uparrow:active{
+  background-color:#BBB;
+}
+
+.playplace > .toggle > .arrows > .downarrow{
+  width:25px;
+  height: 10px;
+  box-sizing: border-box;
+  border:#888 1px solid;;
+  border-top:#888 0px solid;;
+}
+
+.playplace > .toggle > .arrows > .downarrow:active{
+  background-color:#BBB;
+}
+
+.playplace > .toggle > .arrows > .uparrow:before{
+  content: '\25BE';
+  width:100%;
+  display:inline-block;
+  margin-top:-3.5px;
+  color:#888;
+  text-align: center;
+  font-size:16px;
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+
+
+.playplace > .toggle > .arrows > .downarrow:before{
+  content: '\25BE';
+  width:100%;
+  display:inline-block;
+  margin-top:-5.5px;
+  color:#888;
+  text-align: center;
+  font-size:16px;
+
+}
+
+
+
+
+.playplace > .toggle > input{
+  float:left;
+  padding-left:4px;
+  height: 20px;
+  width:calc(100% - 25px);
+  outline:none;
+  color:#ddd;
+  font-size:11px;
+  background-color:#444;
+  border:none;
+}
+
+
+.playplace_chosen{
+    outline-style: double;
+     outline-color: #52AEFB;
+}
