@@ -136,14 +136,23 @@ You have admin access to this forum.
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
     </div>
     <div class="displayoptions">
-      <a v-on:click="showarchived = false" v-bind:class="{ chosen: showarchived == false }">Unarchived</a>
-      <a v-on:click="showarchived = true" v-bind:class="{ chosen: showarchived == true }">Archived</a>
+      <a v-on:click="showarchived = false, important = false;" v-bind:class="{ chosen: showarchived == false && important != true }">Unarchived</a>
+      <a v-on:click="showarchived = true, important = false;" v-bind:class="{ chosen: showarchived == true && important != true }">Archived</a>
+      <a v-on:click="important = true" v-bind:class="{ chosen: important == true }">Important</a>
     </div>
     <div class="searchnotice" v-show="searchtag != ''" ><i class="fa fa-close" v-on:click="notag()"></i> Posts marked with #@{{searchtag}}</div>
-    <div class="question" v-for="post in posts_meta" v-on:click="choose(post)" v-show="(post.matchness > 0 && !post.archived && !showarchived) || (showarchived == true && post.archived == true && post.matchness > 0)"  v-bind:class="{ 'chosen': chosen.id == post.id }">
+    <div class="question" v-for="post in posts_meta" v-on:click="choose(post)"
+    v-show="important && post.important && post.matchness > 0 || (post.matchness > 0 && !post.archived && !showarchived && !important) || (!important && showarchived == true && post.archived == true && post.matchness > 0)"
+    v-bind:class="{ 'chosen': chosen.id == post.id }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
-      <h3><span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp <i class="fa fa-comment"></i> @{{post.count}}
+      <h3>
+
+      <i class="fa fa-star" style="color:gold;" v-if="post.important == 1" @if($admin || $owner) v-on:click="makeunimportant()" @endif></i>
+      @if($admin || $owner)<i class="fa fa-star-o"   v-else v-on:click="makeimportant()" ></i>@endif
+
+      <span v-if="post.solved == true"><i class="fa fa-certificate"></i> Solved</span> &nbsp
+      <i class="fa fa-comment"></i> @{{post.count}}
       <span style="float:right;color:#666;margin-right:3px;"> @{{post.diff}} </span>
       </h3>
     </div>
@@ -203,6 +212,10 @@ You have admin access to this forum.
       v-bind:class="{ 'chosen': chosen.solved == true }">
       <span><i class="fa fa-close"></i> Solved</span>
     </div>
+
+
+
+
     <br><br>
     <div class="answer">
       <div class="image addanswer" v-on:click="answer()"><i class="fa fa-plus"></i></div>
@@ -300,6 +313,7 @@ var qanda = new Vue({
     tags: [],
     tab: 0,
     searchtag: '',
+    important: 0,
     newtags: JSON.stringify([])
   },
   created: function () {
@@ -458,7 +472,9 @@ var qanda = new Vue({
       str = tobechosen.content;
       str = format(str);
       this.chosen = tobechosen;
-      this.chosen.tags = JSON.parse(this.chosen.tags);
+      if(!(this.chosen.tags instanceof Array)){
+        this.chosen.tags = JSON.parse(this.chosen.tags);
+      }
       $(".main .content").html(str);
     },
     searching: function (){
@@ -734,6 +750,40 @@ var qanda = new Vue({
           }
       });
       this.chosen.solved = false;
+    },
+    makeimportant: function () {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/class/" + {{$section->id}} + "/makeimportant",
+          data: {"question":this.chosen.id},
+          success: function(data){
+            console.log(data);
+            console.log("Done!");
+          }
+      });
+      this.chosen.important = 1;
+    },
+    makeunimportant: function () {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/class/" + {{$section->id}} + "/makeunimportant",
+          data: {"question":this.chosen.id},
+          success: function(data){
+            console.log(data);
+            console.log("Done!");
+          }
+      });
+      this.chosen.important = 0;
     },
     remove: function () {
       while(this.semaphore() != false) {};

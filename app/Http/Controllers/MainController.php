@@ -643,6 +643,37 @@ class MainController extends Controller
       return "success";
     }
 
+
+    public function makeimportant(Request $request, $id){
+      $user = Auth::user();
+    if($user==null)
+    {
+      return redirect("/login");
+    }
+      $section = Section::find($id);
+      if($this->adminclass($section) || $section->owner == $user->id){
+        $question = Post::find($request->question);
+        $question->important = 1;
+        $question->save();
+      }
+      return "success";
+    }
+
+    public function makeunimportant(Request $request, $id){
+      $user = Auth::user();
+    if($user==null)
+    {
+      return redirect("/login");
+    }
+      $section = Section::find($id);
+      if($this->adminclass($section) || $section->owner == $user->id){
+        $question = Post::find($request->question);
+        $question->important = 0;
+        $question->save();
+      }
+      return "success";
+    }
+
     public function deletequestion(Request $request, $id){
       $user = Auth::user();
 	  if($user==null)
