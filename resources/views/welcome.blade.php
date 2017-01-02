@@ -159,6 +159,7 @@ header > .rightlinks > a{
     <div class="rightlinks">
       <a href="/register">Sign Up</a>
       <a href="/login">Login</a>
+      <a href="/features">Features</a>
     </div>
   </header>
   <section name="main">

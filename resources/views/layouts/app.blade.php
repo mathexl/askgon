@@ -30,6 +30,7 @@
     @if(!Auth::user())
     <a href="/register">Sign Up</a>
     <a href="/login">Login</a>
+    <a href="/features">Features</a>
     @else
     <a href="/logout">Logout</a>
     <a href="/home">My Dashboard</a>
