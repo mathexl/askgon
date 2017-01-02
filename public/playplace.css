@@ -18,6 +18,89 @@
   z-index:100000000000000000; /* Hopefully high enough */
 }
 
+.playplace > .corner{
+  cursor: pointer;
+}
+
+.playplace.rtc{
+  bottom:auto;
+  top:20px;
+  right:20px;
+  left:auto;
+}
+
+.playplace.ltc{
+  bottom:auto;
+  top:20px;
+  left:20px;
+  right:auto;
+}
+
+.playplace.lbc{
+  bottom:20px;
+  top:auto;
+  right:auto;
+  left:20px;
+}
+
+.playplace > .ltc{
+  width:5px;
+  height:5px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  border:1px #ddd solid;
+}
+
+.playplace > .rtc{
+  width:5px;
+  height:5px;
+  position:absolute;
+  top:0px;
+  right:0px;
+  border:1px #ddd solid;
+}
+
+.playplace > .lbc{
+  width:5px;
+  height:5px;
+  position:absolute;
+  bottom:0px;
+  left:0px;
+  border:1px #ddd solid;
+}
+
+.playplace > .rbc{
+  width:5px;
+  height:5px;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  border:1px #ddd solid;
+}
+
+.playplace > .ltc.chosen{
+  background-color: #ddd;
+}
+
+.playplace > .rtc.chosen{
+  background-color: #ddd;
+}
+
+.playplace > .lbc.chosen{
+  background-color: #ddd;
+}
+
+.playplace > .rbc.chosen{
+  background-color: #ddd;
+}
+
+.playplace > img{
+  width:80%;
+  margin-left:10%;
+  padding-bottom:10px;
+}
+
 .playplace > h1{
   font-size:11px;
   font-family: "Lato", Tahoma;
@@ -27,6 +110,23 @@
   box-sizing: border-box;
   color:#ddd;
   display:inline-block;
+}
+
+.playplace > h1 > span{
+  float:right;
+  width:calc(40% + 10px);
+}
+
+.playplace > h2{
+  width:100%;
+  font-size:12px;
+  text-align: center;
+  color:#bbb;
+  font-weight:500;
+  font-family: "Lato", Tahoma;
+  border-bottom:1px #ddd solid;
+  padding-bottom:5px;
+  margin-bottom:5px;
 }
 
 .playplace > .toggle{

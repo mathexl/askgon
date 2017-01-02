@@ -19,6 +19,10 @@ Route::get('/datapolicy', function () {
     return view('datapolicy');
 });
 
+Route::get('/features', function () {
+    return view('features');
+});
+
 Route::post('/class/{id}/answerit','MainController@answerit');
 Route::post('/class/{id}/subanswer','MainController@subanswer');
 Route::post('/class/{id}/deleteanswer','MainController@deleteanswer');

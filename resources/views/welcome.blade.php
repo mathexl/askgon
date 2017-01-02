@@ -1,9 +1,9 @@
 
 <link rel="stylesheet" href="css/font-awesome.min.css">
 <script src="/js/jquery-1.9.1.min.js"></script>
-<link rel="stylesheet" href="/playplace.css">
+<!--<link rel="stylesheet" href="/playplace.css">
 <script src="/playplace.js"></script>
-
+-->
 <title>Postrium - Open Source Q and A</title>
 <style>
 body{
@@ -153,26 +153,7 @@ header > .rightlinks > a{
 }
 </style>
 <body>
-  <div class="playplace">
-  <h1>Height || Width</h1>
-  <div class="toggle playplace_height">
-    <div class="arrows">
-      <div class="uparrow"></div>
-      <div class="downarrow"></div>
-    </div>
-    <input value="40px" >
-  </div>
-  <div class="marriage width_height">
 
-  </div>
-  <div class="toggle playplace_width">
-    <div class="arrows">
-      <div class="uparrow"></div>
-      <div class="downarrow"></div>
-    </div>
-    <input value="40px" >
-  </div>
-</div>
   <header>
     <img src="postrium_white.png">
     <div class="rightlinks">
@@ -206,4 +187,52 @@ header > .rightlinks > a{
 
   </section>
   @include('footer')
+
+
+  <div class="playplace" style="display:none;">
+  <div class="ltc corner"></div>
+  <div class="rtc corner"></div>
+  <div class="lbc corner"></div>
+  <div class="rbc chosen corner"></div>
+
+  <img src="playplaceJS.png">
+  <h2>Dimensions</h2>
+  <h1>Height <span>Width</span></h1>
+  <div class="toggle playplace_height">
+    <div class="arrows">
+      <div class="uparrow"></div>
+      <div class="downarrow"></div>
+    </div>
+    <input value="40px" >
+  </div>
+  <div class="marriage width_height">
+
+  </div>
+  <div class="toggle playplace_width">
+    <div class="arrows">
+      <div class="uparrow"></div>
+      <div class="downarrow"></div>
+    </div>
+    <input value="40px" >
+  </div>
+
+  <h1>Left <span>Right</span></h1>
+  <div class="toggle playplace_height">
+    <div class="arrows">
+      <div class="uparrow"></div>
+      <div class="downarrow"></div>
+    </div>
+    <input value="40px" >
+  </div>
+  <div class="marriage width_height">
+
+  </div>
+  <div class="toggle playplace_width">
+    <div class="arrows">
+      <div class="uparrow"></div>
+      <div class="downarrow"></div>
+    </div>
+    <input value="40px" >
+  </div>
+</div>
 </body>
