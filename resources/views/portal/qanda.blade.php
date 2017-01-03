@@ -178,16 +178,16 @@ You have admin access to this forum.
         </div>
         <div class="row">
         <input type="hidden" name="tags" v-model="newtags">
-        <input type="checkbox" name="question" id="question" v-model="newpost.question">
-          <label for="question" style="margin-top: 5px;
-    float: left;margin-left:5px;margin-right:10px;"> This is a Question</label>
-        <input type="checkbox" name="anonymous" id="anonymous" v-model="newpost.anonymous"
-        @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
-        >
-        <label for="anonymous" style="margin-top: 5px;
-        float: left;margin-left:5px;"
-        @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
-        > Anonymous Post</label>
+
+        <div class="settings">
+          <b @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
+          v-on:click="postanonymous()" v-bind:class="{ chosen : newpost.anonymous == true }"><i class="fa fa-user-secret"></i> Anonymous</b>
+          <b v-on:click="postprivate()" v-bind:class="{ chosen : newpost.private == true }"><i class="fa fa-lock"></i> Private</b>
+          <b v-on:click="postquestion()" v-bind:class="{ chosen : newpost.question == true }"><i class="fa fa-question-circle-o"></i> Question</b>
+
+        </div>
+
+
         <a v-on:click="comparepost()">POST TO PUBLIC</a>
         </div>
       </form>
@@ -333,7 +333,8 @@ var qanda = new Vue({
       content: "",
       anonymous: false,
       question: true,
-      title: ""
+      title: "",
+      private: false
     }
   },
   created: function () {
@@ -361,6 +362,27 @@ var qanda = new Vue({
     }
   },
   methods: {
+    postanonymous: function () {
+      if(this.newpost.anonymous == true){
+        this.newpost.anonymous = false;
+      } else {
+        this.newpost.anonymous = true;
+      }
+    },
+    postquestion: function () {
+      if(this.newpost.question == true){
+        this.newpost.question = false;
+      } else {
+        this.newpost.question = true;
+      }
+    },
+    postprivate: function () {
+      if(this.newpost.private == true){
+        this.newpost.private = false;
+      } else {
+        this.newpost.private = true;
+      }
+    },
     comparepost: function () {
       this.similars = [];
       mega = this.newpost.title + ". " + this.newpost.content; // full sentence
@@ -397,7 +419,8 @@ var qanda = new Vue({
             'question': this.newpost.question,
             'anonymous': this.newpost.anonymous,
             'content': this.newpost.content,
-            'tags': this.newtags
+            'tags': this.newtags,
+            'private' : this.newpost.private
           },
           success: function(data){
 

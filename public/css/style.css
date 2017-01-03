@@ -454,6 +454,8 @@ section[name="qanda"] > .main > form{
 
 }
 
+
+
 section[name="qanda"] > .main > form textarea{
   width:80%;
   border:none;
@@ -523,6 +525,36 @@ section[name="qanda"] > .main .answer form textarea{
   height:10vh;
   width:97.5%;
   margin-left:1%;
+}
+
+section[name="qanda"] > .main form .settings{
+  width:100%;
+  height:40px;
+  display:inline-block;
+}
+
+
+
+section[name="qanda"] > .main form .settings b{
+  margin:6px;
+  padding:4px 10px;
+  border:2px #ddd solid;
+  color:#bbb;
+  font-size:11px;
+  background-color:transparent;
+  border-radius:8px;
+  float:left;
+  margin-left:0px;
+  cursor: pointer;
+}
+
+section[name="qanda"] > .main form .settings b + b{
+  margin-left:6px;
+}
+
+section[name="qanda"] > .main form .settings b.chosen{
+    border-color:#52AEFB;
+    color:#52AEFB;
 }
 
 section[name="qanda"] > .main form .result{
@@ -614,7 +646,7 @@ section[name="qanda"] > .main form .row{
   margin-left:2.5%;
   margin-top:5px;
   border:0px lightblue solid;
-  height:100px;
+  height:30px;
   resize:none;
   font-size:13px;
   padding-left:4px;

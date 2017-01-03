@@ -189,6 +189,9 @@ class MainController extends Controller
       if(!$user){
         return false;
       }
+
+      $posts = $posts->keyBy('id');
+
       foreach($posts as $post){
         /*******************************************************
         Each post has a few necessary data parts that determine
@@ -207,6 +210,13 @@ class MainController extends Controller
         Active: For Q and A use
         Matchness: For Q and A use (sorting)
         *******************************************************/
+        if($post->private == true){
+          if($post->owner != $user->id && !$this->adminclass($section)){
+            $posts->forget($post->id);
+            continue;
+          }
+        }
+
         if($post->anonymous != true){
           //add only when not anonymous
           $post->name = User::find($post->owner)->name;
@@ -524,6 +534,20 @@ class MainController extends Controller
         else {$post->question = true;}
         if($request->anonymous == NULL || $request->anonymous == false){$post->anonymous = false;}
         else {$post->anonymous = true;}
+
+
+        /* overrides  */
+        if($this->adminclass($section) && !$section->anon_admin){
+          $request->anonymous = false;
+        }
+
+        if(!$this->adminclass($section) && !$section->anon_user){
+          $request->anonymous = false;
+        }
+
+
+        if($request->private == NULL || $request->private == false){$post->private = false;}
+        else {$post->private = true;}
         $post->title = $request->title;
         $post->content = $request->content;
         $post->tags = $request->tags;
