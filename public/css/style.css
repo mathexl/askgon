@@ -111,6 +111,10 @@ section[name="qanda"]{
   font-family: 'Raleway','Lato','Mukta Vaani';
 }
 
+section[name="qanda"].user{
+  height:calc(100vh - 50px);
+}
+
 section[name="qanda"] .correct{
     position: absolute;
     right: 10px;
@@ -157,7 +161,7 @@ section[name="qanda"] > .questions{
   border-right:1px #ddd solid;
   box-sizing: border-box;
   float:left;
-
+  overflow-y:scroll;
 
 }
 
@@ -1030,4 +1034,12 @@ section[name="mainfeatures"] + section + section > a{
   padding-top: 19px;
   margin-top: 15vh;
   text-decoration: none;
+}
+
+.admin {
+  background-color:#FBEAB0 !important;
+}
+
+.admin.chosen {
+  background-color:#111 !important;
 }

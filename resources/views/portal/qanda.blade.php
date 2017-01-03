@@ -75,7 +75,7 @@ Pass the link to any users or admins to access the forum. <b>User Password</b>: 
 You have admin access to this forum.
 </section>
 @endif
-<section name="qanda" id="qanda">
+<section name="qanda" id="qanda" @if($section->owner != Auth::user()->id && !$admin) class="user" @endif>
   <div class="overlay" v-show="settings == true" v-on:click="toggle_settings()"></div>
   @if($owner)
   <div class="settings">
@@ -144,7 +144,7 @@ You have admin access to this forum.
     <div class="searchnotice" v-show="searchtag != ''" ><i class="fa fa-close" v-on:click="notag()"></i> Posts marked with #@{{searchtag}}</div>
     <div class="question" v-for="post in posts_meta" v-on:click="choose(post)"
     v-show="important && post.important && post.matchness > 0 || (post.matchness > 0 && !post.archived && !showarchived && !important) || (!important && showarchived == true && post.archived == true && post.matchness > 0)"
-    v-bind:class="{ 'chosen': chosen.id == post.id }">
+    v-bind:class="{ 'chosen': chosen.id == post.id, 'admin' : post.admin == true }">
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
       <h3>
@@ -236,7 +236,7 @@ You have admin access to this forum.
         <div class="result answer_popup" style="display:none;"></div>
       </form>
     </div>
-    <div class="answer" v-for="answer in answers">
+    <div class="answer" v-for="answer in answers" track-by="$index">
       <div style="background-image:url('/profile.png');" class="image"></div>
       <div class="author">Answered by @{{answer.name}}
         <span v-if="answer.owner == {{$user->id}}" v-on:click="deleteanswer(answer.id)" style="cursor:pointer;"> <i class="fa fa-trash"></i>
@@ -245,7 +245,7 @@ You have admin access to this forum.
       <div class="stars" v-on:click="vote(answer.id)" v-if="answer.voted != true" style="cursor:pointer;"><i class="fa fa-star"></i> @{{answer.vote}}</div>
       <div class="stars" v-else style="background-color:gold;color:white;"><i class="fa fa-star"></i> @{{answer.vote}}</div>
       <p>@{{answer.content}}</p>
-            <div class="answer" v-for="subanswer in answer.subanswers" style="margin-bottom:2px;marign-top:2px;">
+            <div class="answer" v-for="subanswer in answer.subanswers" track-by="$index" style="margin-bottom:2px;marign-top:2px;">
               <div style="background-image:url('/profile.png');" class="image"></div>
               <div class="author" style="left:55px;">Answered by @{{subanswer.name}}
                 <span v-if="subanswer.owner == {{$user->id}}" v-on:click="deletesubanswer(answer.id,subanswer.id)" style="cursor:pointer;"> <i class="fa fa-trash"></i>

@@ -15,6 +15,7 @@ use App\User;
 use Auth;
 use App\Post;
 use App\Answer;
+use App\Notification;
 use DB;
 use Carbon\Carbon;
 
@@ -180,6 +181,7 @@ class MainController extends Controller
     private function getposts($id){
       //retract posts using database call.
       $posts = DB::table('posts')->where("section","=",$id)->get();
+      $section = Section::find($id);
       /*************************************************
       Checking user auth and returning error if not.
       *************************************************/
@@ -208,6 +210,11 @@ class MainController extends Controller
         if($post->anonymous != true){
           //add only when not anonymous
           $post->name = User::find($post->owner)->name;
+          if($this->adminclass($section, User::find($post->owner))){
+            $post->admin = true;
+          } else {
+            $post->admin = false;
+          }
         }
         $post->diff = Carbon::parse($post->created_at)->diffForHumans();
         if(strpos($post->diff, "second") > 0){
@@ -238,10 +245,20 @@ class MainController extends Controller
             }
             $owner = User::find($subanswer->owner);
             $subanswer->name = $owner->name; //add name to the subanswer
+            if($this->adminclass($section, User::find($subanswer->owner))){
+              $subanswer->admin = true;
+            } else {
+              $subanswer->admin = false;
+            }
           }
           $answer->subanswers = json_encode($subanswers);
           $owner = User::find($answer->owner);
           $answer->name = $owner->name; //add name to the root answer
+          if($this->adminclass($section, User::find($answer->owner))){
+            $answer->admin = true;
+          } else {
+            $answer->admin = false;
+          }
         }
         $count = count($answers);
         $post->count = $count;
@@ -379,20 +396,20 @@ class MainController extends Controller
     public function semaphore(Request $request){
       $section = Section::find($request->section);
       if(!$section){
-        return false;
+        return json_encode(false);;
       }
       $user = Auth::user();
       if(!$user){
-        return false;
+        return json_encode(false);;
       }
       if(!$this->hallpass($section)){
-        return false;
+        return json_encode(false);;
       }
 
       if($section->abuser == $user->id && (time() - $section->abuser_time) < (8 * $section->abuser_count)){
         //checking if current owner is a potential abuser
         //and has not waited enough time measured by the time waited under 6 * abuse multiplier.
-        return false; //you don't get the key, womp womp
+        return json_encode(false);; //you don't get the key, womp womp
       }
 
       if($section->semaphore > 0 && time() - $section->semaphore_created < 2){
@@ -547,7 +564,26 @@ class MainController extends Controller
         $answer->name = $user->name;
         $answer->voted = false;
         $this->resetsemaphore($section);
+
+        /* sending notification */
+        $notification = new Notification();
+        $post = Post::find($request->question);
+        $notification->content = $user->name . " commented on your post \"" .
+        substr($post->title, 0, 18) . "...\" in " . $section->name;
+        $notification->owner = $post->owner;
+        $notification->section = $section->id;
+        $notification->post = $post->id;
+        $notification->save();
+        /* end of send */
+
+        /* sending notif signal */
+        $user = User::find($post->owner);
+        $user->inbound = true;
+        $user->save();
+
         return json_encode($answer);
+
+
       }
       return view("404");
     }
