@@ -698,6 +698,7 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
 
 }
 
+/*
 @media screen and (max-width:660px){
 
   section[name="qanda"] > .main{
@@ -747,7 +748,7 @@ section[name="qanda"] > .main .answer form .row input[type="submit"]{
   }
 
 }
-
+*/
 section[name="admin"]{
     width: 100%;
     height: 50px;
@@ -1036,8 +1037,44 @@ section[name="mainfeatures"] + section + section > a{
   text-decoration: none;
 }
 
+section[name="qanda"] > .main > .gobackbar{
+  display:none;
+}
+
+@media screen and (max-width: 650px) {
+  section[name="qanda"] > .questions{
+    width:100%;
+  }
+
+  section[name="qanda"] > .questions.exploring{
+    display:none;
+  }
+
+  section[name="qanda"] > .main{
+    width:100%;
+    padding-top:16px;
+  }
+
+  section[name="qanda"] > .main > .gobackbar{
+    display:inline-block;
+    width:100%;
+    height:16px;
+    background-color:#ff6632;
+    text-align:center;
+    color:white;
+    font-size:11px;
+    cursor: pointer;
+    position:fixed;
+    top:0px;
+    left:0px;
+    z-index:40;
+        top: 50px;
+  }
+}
+
+
 .admin {
-  background-color:#FBEAB0 !important;
+  background-color:#FBF2C2 !important;
 }
 
 .admin.chosen {

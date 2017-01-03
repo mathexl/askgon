@@ -131,7 +131,7 @@ You have admin access to this forum.
 
   </div>
   @endif
-  <div class="questions">
+  <div class="questions" v-bind:class="{ exploring: exploring == true }">
     <div class="mainbar">
       <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
@@ -160,6 +160,7 @@ You have admin access to this forum.
   </div>
 
   <div class="main">
+    <div class="gobackbar" v-on:click="exploring = false" v-if="exploring == true">Go back to posts menu</div>
     <div class="pane">
       <h1>Post to the Q and A Portal</h1>
       <h2 v-if="recommendations == false">Make a new post by filling out the following form. Your post will be kept anonymous unless you choose to
@@ -326,6 +327,7 @@ var qanda = new Vue({
     similars: [],
     searchtag: '',
     important: 0,
+    exploring: false, // for responsiveness
     newtags: JSON.stringify([]),
     newpost: {
       content: "",
@@ -549,6 +551,7 @@ var qanda = new Vue({
         this.chosen.tags = JSON.parse(this.chosen.tags);
       }
       $(".main .content").html(str);
+      this.exploring = true;
     },
     searching: function (){
       this.searchtag = '';
