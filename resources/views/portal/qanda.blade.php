@@ -9,6 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="/js/jquery-1.9.1.min.js"></script>
     <script src="/js/vue.js"></script>
+    <script src="/js/similarc.js"></script>
     <link rel="stylesheet" href="/css/font-awesome.min.css">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
@@ -161,12 +162,11 @@ You have admin access to this forum.
   <div class="main">
     <div class="pane">
       <h1>Post to the Q and A Portal</h1>
-      <h2>Make a new post by filling out the following form. Your post will be kept anonymous unless you choose to
+      <h2 v-if="recommendations == false">Make a new post by filling out the following form. Your post will be kept anonymous unless you choose to
       make your identity visible for it!  </h2>
-      <form action="/class/{{$section->id}}/post" method="POST">
-        {!! csrf_field() !!}
-        <input placeholder="Title of Post" name="title">
-        <textarea placeholder="Title of Post" name="content"></textarea>
+      <form v-if="recommendations == false">
+        <input placeholder="Title of Post" name="title" v-model="newpost.title">
+        <textarea placeholder="Title of Post" name="content" v-model="newpost.content"></textarea>
         <div class="result" style="display:none;"></div>
         <div class="row">
           <input placeholder="Add Tags" name="tags" v-model="newtag" v-on:keyup.enter="addtag()"
@@ -177,19 +177,29 @@ You have admin access to this forum.
         </div>
         <div class="row">
         <input type="hidden" name="tags" v-model="newtags">
-        <input type="checkbox" name="question" id="question" value="true">
+        <input type="checkbox" name="question" id="question" v-model="newpost.question">
           <label for="question" style="margin-top: 5px;
     float: left;margin-left:5px;margin-right:10px;"> This is a Question</label>
-        <input type="checkbox" name="anonymous" id="anonymous" value="false"
+        <input type="checkbox" name="anonymous" id="anonymous" v-model="newpost.anonymous"
         @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
         >
         <label for="anonymous" style="margin-top: 5px;
         float: left;margin-left:5px;"
         @if(!$owner) v-if="@if($admin) anon_admin == 1 @else anon_user == 1 @endif" @endif
         > Anonymous Post</label>
-        <input type="submit" value="POST TO PUBLIC">
+        <a v-on:click="comparepost()">POST TO PUBLIC</a>
         </div>
       </form>
+      <div v-else class="recommendations">
+      <p>Wait! Before you post, do any of these recommended posts answer your question?</p>
+        <div class="similars">
+          <div class="recommendation" v-for="similar in similars">
+            @{{similar.title}} - @{{similar.name}}
+          </div>
+        </div>
+        <div class="submit" v-on:click="recommendations = false">Edit Post</div>
+        <div class="submit" v-on:click="triggerpost()">Submit Anyway!</div>
+      </div>
     </div>
     <h1>@{{chosen.title}}
     <span @if(!$owner) v-if="chosen.owner == {{$user->id}} @if($admin) || delete_admin == 1 @endif" @endif v-on:click="remove()" style="padding-top: 3px;"><i class="fa fa-trash"></i></span>
@@ -312,9 +322,17 @@ var qanda = new Vue({
     newtag: '',
     tags: [],
     tab: 0,
+    recommendations: false,
+    similars: [],
     searchtag: '',
     important: 0,
-    newtags: JSON.stringify([])
+    newtags: JSON.stringify([]),
+    newpost: {
+      content: "",
+      anonymous: false,
+      question: true,
+      title: ""
+    }
   },
   created: function () {
     for(i = 0; i < this.posts.length; i++){
@@ -341,6 +359,61 @@ var qanda = new Vue({
     }
   },
   methods: {
+    comparepost: function () {
+      this.similars = [];
+      mega = this.newpost.title + ". " + this.newpost.content; // full sentence
+      first = new Similarc(mega);
+      for(u = 0; u < this.posts.length; u++){
+        console.log("u: " + u)
+        second = new Similarc(this.posts[u].title);
+        third = new Similarc(this.posts[u].content);
+        console.log(this.posts[u].content);
+        console.log(third);
+        if(compareSimilarc(first, second) > 55 || compareSimilarc(first, third) > 55){
+          this.similars.push(this.posts[u]);
+        }
+      }
+      if(this.similars.length == 0){
+        this.triggerpost();
+      } else {
+        this.recommendations = true;
+      }
+    },
+    triggerpost: function() {
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      content = $(".answer_content").val();
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/class/{{$section->id}}/post",
+          data: {
+            'title': this.newpost.title,
+            'question': this.newpost.question,
+            'anonymous': this.newpost.anonymous,
+            'content': this.newpost.content,
+            'tags': this.newtags
+          },
+          success: function(data){
+
+          },
+          error: function (jqXHR, json) {
+              for (var error in json.errors) {
+                  console.log(json.errors[error]);
+              }
+          },
+          finished: function(data){
+          }
+      });
+      this.tick();
+      this.choose(this.posts[0]);
+      this.recommendations = false;
+      $("#add").toggleClass("chosen");
+      $(".pane").toggle();
+    },
     @if($owner)
     toggle_settings: function() {
       if(this.settings == false){

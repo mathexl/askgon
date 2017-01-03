@@ -468,6 +468,7 @@ section[name="qanda"] > .main > .pane{
   height:calc(100vh - 50px);
   background-color:white;
   z-index:100;
+  border-top: 1px #ddd solid;
 }
 
 section[name="qanda"] > .main > .pane > h1{
@@ -534,6 +535,65 @@ font-size: 16px;
       overflow:scroll;
 }
 
+
+section[name="qanda"] > .main .recommendations {
+  width:96%;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+section[name="qanda"] > .main .recommendations > p{
+  font-size: 14px;
+  width:100%;
+  margin-left:0%;
+  margin-right:0%;
+  text-align: center;
+  color:#52AEFb;
+  margin-top:10vh;
+}
+
+section[name="qanda"] > .main .recommendations > .similars > .recommendation{
+  width:46%;
+  margin:2%;
+  border:2px #52AEFB solid;
+  border-style: dotted;
+  padding:20px;
+  float: left;
+  box-sizing: border-box;
+  font-size:14px;
+}
+
+section[name="qanda"] > .main .recommendations > .similars {
+  height: 40vh;
+  width:100%;
+}
+
+section[name="qanda"] > .main .recommendations > .submit{
+  width:120px;
+  height:40px;
+  background-color:transparent;
+  color:black;
+  text-align: center;
+  font-family: "Lato";
+  padding:11px;
+  box-sizing: border-box;
+  font-size:12px;
+  margin-left:calc(50% - 200px);
+  cursor: pointer;
+  float:left;
+  margin-right:20px;
+  border:2px black solid;
+}
+
+section[name="qanda"] > .main .recommendations > .submit + .submit{
+  margin-left:0px;
+  width:200px;
+  background-color:black;
+  color:white;
+  border:none;
+
+}
+
 section[name="qanda"] > .main .answer form .result{
   height:20vh;
   width:97.5%;
@@ -572,6 +632,20 @@ section[name="qanda"] > .main form .row input{
 
 
 section[name="qanda"] > .main form .row input[type="submit"]{
+  float:right;
+  padding:8px;
+  padding-left:18px;
+  padding-right:18px;
+  font-size:10px;
+  height:auto;
+  background-color:black;
+  color:white;
+  font-weight:300;
+  cursor:pointer;
+}
+
+
+section[name="qanda"] > .main form .row a{
   float:right;
   padding:8px;
   padding-left:18px;
