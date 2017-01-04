@@ -32,6 +32,9 @@ Route::post('/class/{id}/notsolved','MainController@notsolved');
 Route::post('/class/{id}/makeimportant','MainController@makeimportant');
 Route::post('/class/{id}/makeunimportant','MainController@makeunimportant');
 
+Route::post('/class/{id}/ping','MainController@ping');
+
+
 Route::post('/class/{id}/remove','MainController@deletequestion');
 Route::post('/class/{id}/archive','MainController@archivequestion');
 Route::post('/class/{id}/unarchive','MainController@unarchivequestion');

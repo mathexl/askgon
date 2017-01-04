@@ -704,6 +704,21 @@ class MainController extends Controller
     }
 
 
+    public function ping(Request $request, $id){
+      $user = Auth::user();
+      if($user==null)
+      {
+        return redirect("/login");
+      }
+      $section = Section::find($id);
+      if($this->hallpass($section)){
+        $question = Post::find($request->question);
+        $question->heat++;
+        $question->save();
+      }
+      return "success";
+    }
+
     public function makeimportant(Request $request, $id){
       $user = Auth::user();
     if($user==null)

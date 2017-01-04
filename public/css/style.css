@@ -241,7 +241,20 @@ section[name="qanda"] .question{
   line-height:18px;
   float:left;
   overflow: hidden;
+  position:relative;
 
+}
+
+section[name="qanda"] .question .heat{
+  position: absolute;
+  top:2px;
+  right:2px;
+  height: 15px;
+  width:15px;
+  border:1px red solid;
+  border-radius:3px;
+  text-align: center;
+  color:red;
 }
 
 section[name="qanda"] .question.chosen{
@@ -690,8 +703,9 @@ section[name="qanda"] > .main form .row a{
   height:auto;
   background-color:black;
   color:white;
-  font-weight:300;
+  font-weight:600;
   cursor:pointer;
+  border-radius:5px;
 }
 
 section[name="qanda"] > .main .answer form .row input[type="submit"]{

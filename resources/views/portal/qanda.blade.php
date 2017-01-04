@@ -145,6 +145,7 @@ You have admin access to this forum.
     <div class="question" v-for="post in posts_meta" v-on:click="choose(post)"
     v-show="important && post.important && post.matchness > 0 || (post.matchness > 0 && !post.archived && !showarchived && !important) || (!important && showarchived == true && post.archived == true && post.matchness > 0)"
     v-bind:class="{ 'chosen': chosen.id == post.id, 'admin' : post.admin == true }">
+      <i class="heat fa fa-thermometer-full" v-if="post.heat > kth"></i>
       <h1>@{{post.title}}</h1>
       <h2>@{{post.content.substring(0,100)}}</h2>
       <h3>
@@ -188,7 +189,7 @@ You have admin access to this forum.
         </div>
 
 
-        <a v-on:click="comparepost()">POST TO PUBLIC</a>
+        <a v-on:click="comparepost()">Post</a>
         </div>
       </form>
       <div v-else class="recommendations">
@@ -275,6 +276,56 @@ function format(str){
   return str;
 }
 
+
+function findKthLargest(nums, k) {
+    if (k < 1 || nums == null) {
+        return 0;
+    }
+    return getKth(nums.length - k +1, nums, 0, nums.length - 1);
+}
+
+function getKth(k, nums, start, end) {
+
+    var pivot = nums[end].heat;
+
+    var left = start;
+    var right = end;
+
+    while (true) {
+
+        while (nums[left].heat < pivot && left < right) {
+            left++;
+        }
+
+        while (nums[right].heat >= pivot && right > left) {
+            right--;
+        }
+
+        if (left == right) {
+            break;
+        }
+
+        swap(nums, left, right);
+    }
+
+    swap(nums, left, end);
+
+    if (k == left + 1) {
+        return pivot;
+    } else if (k < left + 1) {
+        return getKth(k, nums, start, left - 1);
+    } else {
+        return getKth(k, nums, left + 1, end);
+    }
+}
+
+function swap(nums, n1, n2) {
+    var tmp = nums[n1];
+    nums[n1] = nums[n2];
+    nums[n2] = tmp;
+}
+//above three functions from: http://blog.sodhanalibrary.com/2015/06/kth-largest-element-using-javascript.html#.WGwvzrYrL6Y
+
 $( document ).ready(function() {
   $(".pane").hide();
   $(".answer_content").focus(function(){
@@ -326,9 +377,12 @@ var qanda = new Vue({
     recommendations: false,
     similars: [],
     searchtag: '',
+    time: Date.now(),
     important: 0,
     exploring: false, // for responsiveness
     newtags: JSON.stringify([]),
+    avgping: 0,
+    kth: 0,
     newpost: {
       content: "",
       anonymous: false,
@@ -338,7 +392,11 @@ var qanda = new Vue({
     }
   },
   created: function () {
+    totalpings = 0;
+    this.kth = findKthLargest(this.posts, Math.ceil(this.posts.length / 10));
+    this.kth = this.posts[this.kth].heat;
     for(i = 0; i < this.posts.length; i++){
+
       this.posts[i].active = true;
       @if($owner)
       for(j = 0; j < this.users.length; j++){
@@ -352,7 +410,6 @@ var qanda = new Vue({
         this.posts[i].tags = JSON.parse(this.posts[i].tags);
       }
     }
-
   },
   computed: {
     posts_meta: function() {
@@ -552,15 +609,21 @@ var qanda = new Vue({
     },
     choose: function (post) {
       $(".main").show();
-
+      if(Date.now() - this.time > 5000){
+        this.ping();
+      }
+      this.time = Date.now();
       tobechosen = post;
       if( typeof tobechosen.answers === 'string' ) {
+        console.log("parse1");
       tobechosen.answers = JSON.parse(tobechosen.answers);
       }
       this.answers = tobechosen.answers;
       for(i = 0; i < this.answers.length; i++){
         this.answers[i].content = format(this.answers[i].content);
         if( typeof this.answers[i].subanswers === 'string' ) {
+          console.log("parse2");
+
         this.answers[i].subanswers = JSON.parse(this.answers[i].subanswers);
         }
         for(p = 0; p < this.answers[i].subanswers.length; p++){
@@ -570,7 +633,10 @@ var qanda = new Vue({
       str = tobechosen.content;
       str = format(str);
       this.chosen = tobechosen;
-      if(!(this.chosen.tags instanceof Array)){
+      if(typeof this.chosen.tags === 'string' && this.chosen.tags != ''){
+        console.log(this.chosen.tags);
+        console.log("parse3");
+
         this.chosen.tags = JSON.parse(this.chosen.tags);
       }
       $(".main .content").html(str);
@@ -660,6 +726,8 @@ var qanda = new Vue({
           }
       });
       this.posts = window.posts;
+      kth = findKthLargest(this.posts, Math.ceil(this.posts.length / 10));
+      this.kth = this.posts[kth].heat;
     },
     semaphore: function (){
       var base_url = window.location.protocol + "//" + window.location.host;
@@ -936,6 +1004,22 @@ var qanda = new Vue({
       });
       this.chosen.archived = false;
 
+    },
+    ping: function () {
+      console.log("pinging!");
+      var base_url = window.location.protocol + "//" + window.location.host;
+      $.ajaxSetup({
+         headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+      });
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          url: base_url + "/class/" + {{$section->id}} + "/ping",
+          data: {"question":this.chosen.id},
+          success: function(data){
+
+          }
+      });
     },
     loggedin: function () {
       var base_url = window.location.protocol + "//" + window.location.host;
