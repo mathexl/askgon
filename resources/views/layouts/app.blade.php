@@ -24,19 +24,22 @@
 </head>
 <body>
 
-<header class="colored">
+<header class="colored" id="header">
   <a href="/"><img src="/postrium_white.png"></a>
   <div class="rightlinks">
     @if(!Auth::user())
     <a href="/register">Sign Up</a>
     <a href="/login">Login</a>
-    <a href="/features">Features</a>
     @else
     <a href="/logout">Logout</a>
     <a href="/home">My Dashboard</a>
+
+    @include('portal.notifications')
+
     @endif
   </div>
 </header>
+
         <div style="min-height:100vh;">
         @yield('content')
         </div>

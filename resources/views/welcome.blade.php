@@ -5,6 +5,11 @@
 <script src="/playplace.js"></script>
 -->
 <title>Postrium - Open Source Q and A</title>
+@if(Auth::check())
+<script>
+window.location.href("/home");
+</script>
+@endif
 <style>
 body{
   margin:0px;
@@ -12,7 +17,7 @@ body{
 }
 section[name="main"]{
   width:100%;
-  min-height: calc(100vh - 30px);
+  min-height: 48vw;
   display:inline-block;
   position: relative;
   background: -moz-linear-gradient(-45deg, #52AEFB 0%, #52DEFB 99%); /* FF3.6-15 */
@@ -83,17 +88,17 @@ section[name="infobar"]{
   height:auto;
   display:inline-block;
   position:relative;
-  padding-left:10%;
-  padding-right:10%;
+  padding-left: 6%;
+      padding-right: 6%;
   box-sizing: border-box;
 }
 
 section[name="infobar"] > .triad{
   width:33.33%;
   float:left;
-  margin-top:20px;
+  margin-top:50px;
   min-height: 130px;
-  margin-bottom:20px;
+  margin-bottom:50px;
 }
 
 
@@ -151,6 +156,87 @@ header > .rightlinks > a{
  font-family: "Lato", Arial, Tahoma;
  font-size:14px;
 }
+section[name="kudos"]{
+  width:100%;
+  height:335px;
+}
+
+
+section[name="kudos"] > div.space{
+  width:60%;
+  height:335px;
+  float:left;
+  background-image:url('/space.png');
+  background-size:cover;
+  background-position: center;
+}
+
+section[name="kudos"] > div.info{
+  width:40%;
+  height:335px;
+  float:left;
+  background-color:white;
+}
+
+section[name="kudos"] > div.info > img{
+  width:30%;
+  margin-left:35%;
+  margin-right:35%;
+  margin-top:40px;
+}
+
+section[name="kudos"] > div.info > h1{
+  width:36%;
+  margin-left:32%;
+  margin-right:32%;
+  margin-top:3px;
+  font-size:24px;
+  font-family: "Lato";
+  margin-bottom:0px;
+  text-align: center;
+  font-weight: 400;
+}
+
+section[name="kudos"] > div.info > p{
+  width:50%;
+  margin-left:25%;
+  margin-right:25%;
+  margin-top:3px;
+  font-size:13px;
+  font-family: "Lato";
+  text-align: center;
+
+}
+section[name="getstarted"] {
+  width:100%;
+  height:200px;
+  background-color:white;
+  text-align: center;
+  border-bottom:1px #ddd solid;
+  border-top:1px #222 solid;
+}
+
+section[name="getstarted"] > h1 {
+  width:60%;
+  margin-left: 20%;
+  font-family: "Futura";
+  font-size:16px;
+  margin-top:55px;
+  text-align: center;
+}
+
+section[name="getstarted"] > a {
+  display: inline-block;
+  width:200px;
+  background-color:#52AEFB;
+  color:white;
+  font-family: "Futura";
+  font-size:12px;
+  padding:16px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
 </style>
 <body>
 
@@ -159,33 +245,56 @@ header > .rightlinks > a{
     <div class="rightlinks">
       <a href="/register">Sign Up</a>
       <a href="/login">Login</a>
-      <a href="/features">Features</a>
     </div>
   </header>
   <section name="main">
-    <h1>Q and A for your classroom</h1>
-    <h2>A question and answer web platform for your classroom or group, free and open source</h2>
-    <img src="/sshot2.png">
-    <h3>a project by <a href="https://www.parsegon.com"><img src="parsegon.png"></a></h3>
+    <h1>A Smarter Classroom Forum</h1>
+    <h2>Postrium is a free question and answer web platform that specifically encourages class involvement</h2>
+    <img src="/sshot3.png">
+    <h3>a product by <a href="https://www.parsegon.com"><img src="parsegon.png"></a></h3>
+  </section>
+  <section name="kudos">
+    <div class="info">
+      <img src="/star.png">
+      <h1>Kudos!</h1>
+      <p>Postrium’s signature Kudos approach
+encourages students to participate above and beyond through earning “kudos” points </p>
+    </div>
+    <div class="space"></div>
   </section>
   <section name="infobar">
     <div class="triad">
-      <i class="fa fa-code" aria-hidden="true"></i>
-      <h1>Free and Open Source</h1>
-      <h2>Use Postrium on this site or spin up your own instance with our open source <a href="https://github.com/mathexl/postrium">code.</a></h2>
+      <i class="fa fa-usd" aria-hidden="true"></i>
+      <h1>100% Completely Free</h1>
+      <h2>There is and will never be a cost of using Postrium!</h2>
     </div>
     <div class="triad">
-      <i class="fa fa-database" aria-hidden="true"></i>
-      <h1>We Won't Sell Your Data</h1>
-      <h2>Postrium will not sell your data -- we value your privacy and personal security.
-        Read our <a href="/datapolicy">data policy</a>.</h2>
+      <i class="fa fa-bar-chart" aria-hidden="true"></i>
+      <h1>Find out who's participating</h1>
+      <h2>Postrium will give you easy snapshots of who is participating the most and who hasn't been active. </h2>
     </div>
     <div class="triad">
-      <i class="fa fa-fighter-jet" aria-hidden="true"></i>
-      <h1>Fast and Easy to Set Up</h1>
-      <h2>Signing up or creating a forum on Postrium takes under a minute. </h2>
+      <i class="fa fa-lock" aria-hidden="true"></i>
+      <h1>Secure and reliable</h1>
+      <h2>Postrium data is encrypted and protected with world class security.
+        We don't store any sensitive data either!
+       </h2>
     </div>
 
+  </section>
+  <section name="kudos">
+      <div class="space" style="background-image:url('/robots.png')"></div>
+      <div class="info">
+
+      <img src="/robot.png">
+      <h1>Julian Bot!</h1>
+      <p>Julian is a digital bot that will recommend
+similar questions to your students, assist with posting, and other helpful tasks. </p>
+      </div>
+  </section>
+  <section name="getstarted">
+    <h1>A smart digital forum just for your classroom</h1>
+    <a href="/register">Get Started Today!</a>
   </section>
   @include('footer')
 

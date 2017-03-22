@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Section;
 use Auth;
+use App\Notification;
 
 class HomeController extends Controller
 {
@@ -16,6 +17,15 @@ class HomeController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+
+    private function getnotifs(){
+      $user = Auth::user();
+      if($user){
+        $notifications = Notification::where("owner", "=", $user->id)->get();
+        return $notifications;
+      } return [];
     }
 
     private function inclass(Section $section){
@@ -58,7 +68,7 @@ class HomeController extends Controller
             $s[] = $section;
           }
         }
-        return view('home')->with(["classes" => $classes, "joined" => $s]);
+        return view('home')->with(["classes" => $classes, "joined" => $s, "notifications" => $this->getnotifs()]);
     }
 
 

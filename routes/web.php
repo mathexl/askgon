@@ -12,7 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if(!Auth::check()){
+      return view('welcome');
+    } else {
+      return redirect('/home');
+    }
 });
 
 Route::get('/datapolicy', function () {
@@ -38,6 +42,7 @@ Route::post('/class/{id}/ping','MainController@ping');
 Route::post('/class/{id}/remove','MainController@deletequestion');
 Route::post('/class/{id}/archive','MainController@archivequestion');
 Route::post('/class/{id}/unarchive','MainController@unarchivequestion');
+Route::post('/class/{id}/kudos_arr','MainController@kudos_arr');
 
 Route::post('/class/{id}/settings_update','MainController@settings_update');
 Route::post('/class/{id}/kickout','MainController@kickout');
@@ -52,6 +57,7 @@ Route::post('/class/{id}/addclass','MainController@addclass');
 
 Route::post('/semaphore','MainController@semaphore');
 Route::post('/tick','MainController@tick');
+Route::post('/kudos', 'MainController@kudos');
 
 Auth::routes();
 Route::get('/logout', function () {

@@ -67,6 +67,9 @@ footer{
 <section name="admin">
 Pass the link to any users or admins to access the forum. <b>User Password</b>: <span>{{$section->password}}</span>.
 <b>Admin Password</b>: <span>{{$section->copassword}}</span>.
+<a style="float: right;text-decoration: none;cursor: pointer;" v-on:click="toggle_settings()">
+  <span v-show="settings != true">Settings</span> <span v-show="settings == true">Close Settings</span>
+</a>
 </section>
 @endif
 
@@ -75,10 +78,10 @@ Pass the link to any users or admins to access the forum. <b>User Password</b>: 
 You have admin access to this forum.
 </section>
 @endif
-<section name="qanda" id="qanda" @if($section->owner != Auth::user()->id && !$admin) class="user" @endif>
+<section name="qanda"  id="qanda" @if($section->owner != Auth::user()->id && !$admin) class="user" @endif>
   <div class="overlay" v-show="settings == true" v-on:click="toggle_settings()"></div>
   @if($owner)
-  <div class="settings">
+  <div class="settings" v-show="settings == true">
     <h1 v-on:click="toggle_settings()">Class Settings
     <i class="fa fa-minus-square-o" aria-hidden="true" v-show="settings == true"></i>
     <i class="fa fa-plus-square-o" aria-hidden="true" v-show="settings != true"></i>
@@ -107,6 +110,13 @@ You have admin access to this forum.
           <div class="label" v-on:click="delete_admin_toggle()">Delete Posts</div>
         </div>
       </div>
+      <div class="architecture" v-show="tab == 0">
+        <h1>Enable Kudos</h1>
+        <div class="options">
+          <div class="box" v-bind:class="{ chosen: kudos == 1 }" v-on:click="kudos_toggle()"></div>
+          <div class="label" v-on:click="kudos_toggle()">Enable</div>
+        </div>
+      </div>
       <div class="architecture" v-show="tab == 1">
         <br>
         <p>The following people have administrative access to this class.</p>
@@ -132,6 +142,8 @@ You have admin access to this forum.
   </div>
   @endif
   <div class="questions" v-bind:class="{ exploring: exploring == true }">
+    <div class="kudos" v-if="kudos">@{{ kudos_count }}</div>
+
     <div class="mainbar">
       <input v-on:keyup="searching()" v-model="search" placeholder="Search questions...">
       <div class="button" id="add"><i class="fa fa-plus"></i> Add</div>
@@ -140,6 +152,7 @@ You have admin access to this forum.
       <a v-on:click="showarchived = false, important = false;" v-bind:class="{ chosen: showarchived == false && important != true }">Unarchived</a>
       <a v-on:click="showarchived = true, important = false;" v-bind:class="{ chosen: showarchived == true && important != true }">Archived</a>
       <a v-on:click="important = true" v-bind:class="{ chosen: important == true }">Important</a>
+
     </div>
     <div class="searchnotice" v-show="searchtag != ''" ><i class="fa fa-close" v-on:click="notag()"></i> Posts marked with #@{{searchtag}}</div>
     <div class="question" v-for="post in posts_meta" v-on:click="choose(post)"
@@ -160,9 +173,9 @@ You have admin access to this forum.
     </div>
   </div>
 
-  <div class="main">
+  <div class="main" >
     <div class="gobackbar" v-on:click="exploring = false" v-if="exploring == true">Go back to posts menu</div>
-    <div class="pane">
+    <div class="pane" v-bind:class="{ 'night': recommendations != false}">
       <h1>Post to the Q and A Portal</h1>
       <h2 v-if="recommendations == false">Make a new post by filling out the following form. Your post will be kept anonymous unless you choose to
       make your identity visible for it!  </h2>
@@ -353,7 +366,7 @@ $( document ).ready(function() {
 
 //VUE
 var qanda = new Vue({
-  el: '#qanda',
+  el: 'body',
   data: {
     posts: {!!json_encode($posts)!!},
     chosen: '',
@@ -363,14 +376,17 @@ var qanda = new Vue({
     anon_user: {!! json_encode($section->anon_user) !!},
     archive_admin: {!! json_encode($section->archive_admin) !!},
     delete_admin: {!! json_encode($section->delete_admin) !!},
+    kudos: {!! json_encode($section->kudos) !!},
     @if($owner)
     // admin privileged data
     settings: false,
     admins: {!! json_encode($admins) !!},
     users: {!! json_encode($users) !!},
-    // end of admin privileged data
+    kudos_arr: [],
+    // end of a dmin privileged data
     @endif
     showarchived: false,
+    kudos_count: {!! $kudos !!},
     newtag: '',
     tags: [],
     tab: 0,
@@ -394,7 +410,12 @@ var qanda = new Vue({
   created: function () {
     totalpings = 0;
     this.kth = findKthLargest(this.posts, Math.ceil(this.posts.length / 10));
-    this.kth = this.posts[this.kth].heat;
+    console.log(this.kth);
+    if(this.posts[this.kth]){
+      this.kth = this.posts[this.kth].heat;
+    } else {
+      this.kth = 1000;
+    }
     for(i = 0; i < this.posts.length; i++){
 
       this.posts[i].active = true;
@@ -410,6 +431,25 @@ var qanda = new Vue({
         this.posts[i].tags = JSON.parse(this.posts[i].tags);
       }
     }
+
+    @if($owner)
+    var base_url = window.location.protocol + "//" + window.location.host;
+    $.ajaxSetup({
+       headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
+    });
+    $.ajax({
+        type: "POST", // or GET
+        dataType: 'JSON',
+        async: true,
+        url: base_url + "/class/{{$section->id}}/kudos_arr",
+        data: {},
+        success: function(data){
+          window.kudos_arr = data;
+        }
+    });
+    this.kudos_arr = window.kudos_arr;
+    @endif
+
   },
   computed: {
     posts_meta: function() {
@@ -466,6 +506,18 @@ var qanda = new Vue({
          headers: { 'X-CSRF-Token' : "{{ csrf_token() }}"}
       });
       content = $(".answer_content").val();
+      anon = 0;
+      priv = 0;
+      ques = 0;
+      if(this.newpost.anonymous == true){
+        anon = 1;
+      }
+      if(this.newpost.private == true){
+        priv = 1;
+      }
+      if(this.newpost.question == true){
+        ques = 1;
+      }
       $.ajax({
           type: "POST", // or GET
           dataType: 'JSON',
@@ -473,11 +525,11 @@ var qanda = new Vue({
           url: base_url + "/class/{{$section->id}}/post",
           data: {
             'title': this.newpost.title,
-            'question': this.newpost.question,
-            'anonymous': this.newpost.anonymous,
+            'question': ques,
+            'anonymous': anon,
             'content': this.newpost.content,
             'tags': this.newtags,
-            'private' : this.newpost.private
+            'private' : priv
           },
           success: function(data){
 
@@ -492,9 +544,9 @@ var qanda = new Vue({
       });
       this.tick();
       this.choose(this.posts[0]);
+      $(".pane").toggle();
       this.recommendations = false;
       $("#add").toggleClass("chosen");
-      $(".pane").toggle();
     },
     @if($owner)
     toggle_settings: function() {
@@ -519,7 +571,8 @@ var qanda = new Vue({
             'anon_admin': this.anon_admin,
             'anon_user': this.anon_user,
             'archive_admin': this.archive_admin,
-            'delete_admin': this.delete_admin
+            'delete_admin': this.delete_admin,
+            'kudos': this.kudos
           },
           success: function(data){
             console.log(data);
@@ -548,6 +601,10 @@ var qanda = new Vue({
     },
     delete_admin_toggle: function() {
         this.delete_admin = (this.delete_admin + 1) % 2;
+        this.settings_update();
+    },
+    kudos_toggle: function() {
+        this.kudos = (this.kudos + 1) % 2;
         this.settings_update();
     },
     kickout: function(user) {
@@ -728,6 +785,23 @@ var qanda = new Vue({
       this.posts = window.posts;
       kth = findKthLargest(this.posts, Math.ceil(this.posts.length / 10));
       this.kth = this.posts[kth].heat;
+
+
+      $.ajax({
+          type: "POST", // or GET
+          dataType: 'JSON',
+          async: false,
+          url: base_url + "/kudos",
+          data: {'section' : {{$section->id}}  },
+          success: function(data){
+            window.kudos = data;
+          },
+          finished: function(data){
+          }
+      });
+
+      this.kudos_count = window.kudos;
+
     },
     semaphore: function (){
       var base_url = window.location.protocol + "//" + window.location.host;
@@ -828,9 +902,10 @@ var qanda = new Vue({
           url: base_url + "/class/" + {{$section->id}} + "/vote",
           data: {'id': id, 'question': this.chosen.id},
           success: function(data){
-
+            console.log(data);
           },
           finished: function(data){
+            console.log(data);
           }
       });
       if(up_id > 0){
@@ -1047,6 +1122,8 @@ var qanda = new Vue({
 window.setInterval(function(){
   qanda.tick();
 }, 5000);
+
+
 
 window.setInterval(function(){
   qanda.loggedin();

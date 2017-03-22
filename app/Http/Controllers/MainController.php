@@ -21,6 +21,19 @@ use Carbon\Carbon;
 
 class MainController extends Controller
 {
+
+    /************* base scaffolding ********************/
+    /* data passed in all the views of the application */
+    public function __construct()
+    {
+      $user = Auth::user();
+      if($user){
+        $notifications = Notification::where("owner", "=", $user->id)->get();
+        View::share('notifications', $notifications);
+      }
+    }
+    /***************************************************/
+
     /**************** gatekeeper ***********************/
 /*  gatekeeper determines if a user has access to the data
     of a class. Each class has a set of gates alongside an
@@ -110,6 +123,31 @@ class MainController extends Controller
       return true;
       }
       return false;
+    }
+
+    private function bump_kudos($id, $val = 1, $user = false){
+      if(!$user){
+        $user = Auth::user();
+      }
+      $section = Section::find($id);
+
+      if(!$section->kudos_arr){$kudos_arr = [];}
+      else {
+        $kudos_arr = json_decode($section->kudos_arr);
+      }
+      for($i = 0; $i < count($kudos_arr); $i++){
+        if($kudos_arr[$i][0] == $user->id){
+          $kudos_arr[$i][1] += $val;
+          $section->kudos_arr = json_encode($kudos_arr);
+          $section->save();
+          return 0;
+        }
+      }
+
+      $kudos_arr[] = [$user->id, $val]; // first pg_connection_status
+      $section->kudos_arr = json_encode($kudos_arr);
+      $section->save();
+      return -1;
     }
 
     /***************** get admins **********************/
@@ -453,6 +491,24 @@ class MainController extends Controller
       return json_encode($this->getposts($section->id));
     }
 
+    public function kudos(Request $request){
+      $user = Auth::user();
+      $section = Section::find($request->section);
+      if(!$section->kudos_arr){$kudos_arr = [];}
+      else {
+        $kudos_arr = json_decode($section->kudos_arr);
+      }
+
+      for($i = 0; $i < count($kudos_arr); $i++){
+        if($kudos_arr[$i][0] == $user->id){
+          return $kudos_arr[$i][1];
+        }
+      }
+
+      return 0;
+
+    }
+
     public function addclass(Request $request, $id){
       $section = Section::find($id);
       if($request->password != $section->password && $request->password != $section->copassword){
@@ -530,24 +586,27 @@ class MainController extends Controller
 
       if($this->hallpass($section)){
         $post = new Post();
-        if($request->question == NULL || $request->question == false){$post->question = false;}
-        else {$post->question = true;}
-        if($request->anonymous == NULL || $request->anonymous == false){$post->anonymous = false;}
-        else {$post->anonymous = true;}
+        if($request->question == NULL || $request->question == 0){$post->question = 0;}
+        else {$post->question = 1;}
+
+        if($request->anonymous == NULL || $request->anonymous == 0){$post->anonymous = 0;}
+        else {$post->anonymous = 1;}
 
 
         /* overrides  */
         if($this->adminclass($section) && !$section->anon_admin){
-          $request->anonymous = false;
+          $request->anonymous = 0;
         }
 
         if(!$this->adminclass($section) && !$section->anon_user){
-          $request->anonymous = false;
+          $request->anonymous = 0;
         }
 
 
-        if($request->private == NULL || $request->private == false){$post->private = false;}
-        else {$post->private = true;}
+        if($request->private == NULL || $request->private == 0){$post->private = 0;}
+        else {$post->private = 1;}
+
+
         $post->title = $request->title;
         $post->content = $request->content;
         $post->tags = $request->tags;
@@ -555,6 +614,7 @@ class MainController extends Controller
         $post->section = $section->id;
         $post->solved = false;
         $post->save();
+        $this->bump_kudos($id, 1);
         $this->resetsemaphore($section);
         return redirect("/class/" . $section->id . "");
       }
@@ -567,10 +627,10 @@ class MainController extends Controller
     {
 
       $user = Auth::user();
-	  if($user==null)
-	  {
-		  return redirect("/login");
-	  }
+  	  if($user==null)
+  	  {
+  		  return redirect("/login");
+  	  }
       $section = Section::find($id);
       $this->checksemaphore($section);
 
@@ -605,6 +665,8 @@ class MainController extends Controller
         $user->inbound = true;
         $user->save();
 
+        $this->bump_kudos($id, 2, $user); //bump kudos
+
         return json_encode($answer);
 
 
@@ -634,6 +696,9 @@ class MainController extends Controller
         $answer->name = $user->name;
         $answer->voted = false;
         $this->resetsemaphore($section);
+
+        $this->bump_kudos($id, 1, $user); //bump kudos
+
         return json_encode($answer);
       }
       return view("404");
@@ -651,6 +716,8 @@ class MainController extends Controller
       if($this->hallpass($section)){
         $answer = Answer::find($request->id);
         $answer->vote = $answer->vote + 1;
+        $this->bump_kudos($id, 1, User::find($answer->owner)); //bump kudos
+
         if($answer->voted == ""){
           $answer->voted = "[]";
         }
@@ -759,7 +826,7 @@ class MainController extends Controller
       $this->checksemaphore($section);
       if($this->hallpass($section)){
         $question = Post::find($request->question);
-        if($question->owner == $user->id){
+        if($question->owner == $user->id || $section->delete_admin == true && $this->adminclass($section)){
           $question->delete();
         }
       }
@@ -784,6 +851,18 @@ class MainController extends Controller
       }
       $this->resetsemaphore($section);
       return "success";
+    }
+
+    public function kudos_arr(Request $request, $id){
+      $user = Auth::user();
+      if($user==null)
+      {
+        return redirect("/login");
+      }
+      $section = Section::find($id);
+      if($this->adminclass($section, $user)){
+
+      }
     }
 
     public function unarchivequestion(Request $request, $id){
@@ -831,6 +910,7 @@ class MainController extends Controller
       $section->anon_user = $request->anon_user;
       $section->archive_admin = $request->archive_admin;
       $section->delete_admin = $request->delete_admin;
+      $section->kudos = $request->kudos;
       $section->save();
     }
 
@@ -891,12 +971,24 @@ class MainController extends Controller
         $admins = $this->getadmins($section->id);
         $users = $this->getusers($section->id);
       }
+      $kudos = 0;
+
+      if(!$section->kudos_arr){$kudos_arr = [];}
+      else {
+        $kudos_arr = json_decode($section->kudos_arr);
+      }
+      for($i = 0; $i < count($kudos_arr); $i++){
+        if($kudos_arr[$i][0] == $user->id){
+          $kudos = $kudos_arr[$i][1];
+        }
+      }
+
       if($this->inclass($section)){
         return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => false, "owner" => $owner,
-      "admins" => $admins, "users" => $users]);
+      "admins" => $admins, "users" => $users, "kudos" => $kudos]);
       } else if($this->adminclass($section)) {
         return view("portal.qanda")->with(["section" => $section, "posts" => $posts, "user" => $user, "admin" => true, "owner" => $owner,
-      "admins" => $admins, "users" => $users]);
+      "admins" => $admins, "users" => $users, "kudos" => $kudos]);
       } else {
         return view("portal.register")->with(["section" => $section]);
       }

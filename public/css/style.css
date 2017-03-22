@@ -40,6 +40,60 @@ header > .rightlinks > a{
   font-size:14px;
 }
 
+
+header > .rightlinks > div.notifications {
+  width:25px;
+  height: 25px;
+  float:right;
+  margin-right:10px;
+  border-radius:2px;
+  border: 1px #eee solid;
+  text-align: center;
+  font-size:12px;
+  margin:12.5px;
+  color:#eee;
+  cursor: pointer;
+  box-sizing: border-box;
+  padding-top:2px;
+  position: relative;
+}
+
+header > .rightlinks > div.notifications.clicked {
+  background-color:#eee;
+  color:#52AEFB;
+}
+
+header > .rightlinks > div.notifications > .menu {
+  position: absolute;
+  width: 200px;
+  top:30px;
+  box-shadow: 1px 1px rgba(0,0,0,.04);
+  border: 1px #ddd solid;
+  border-radius:5px;
+  background-color:white;
+  min-height: 10vh;
+  left:-85px;
+
+}
+
+header > .rightlinks > div.notifications > .menu > .notification {
+  width: 100%;
+  height: 35px;
+  border-bottom: 1px #ddd solid;
+  box-sizing: border-box;
+  padding-top: 2px;
+  color: #bbb;
+  font-size: 10px;
+  text-align: left;
+  display: inline-block;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+header > .rightlinks > div.notifications > .menu > .notification:hover {
+  opacity:.4;
+}
+
 .newclass{
   float: right;
 padding: 5px 10px;
@@ -162,6 +216,7 @@ section[name="qanda"] > .questions{
   box-sizing: border-box;
   float:left;
   overflow-y:scroll;
+  padding-bottom: 74px;
 
 }
 
@@ -326,6 +381,12 @@ section[name="qanda"] > .main{
   position:relative;
   display:none;
 
+}
+
+section[name="qanda"] .pane.night {
+  background-image:url('/dupes.png');
+  background-size: contain;
+  background-repeat: none;
 }
 
 section[name="qanda"] > .main > h1{
@@ -500,6 +561,10 @@ section[name="qanda"] > .main > .pane > h1{
   margin-top:10px;
 }
 
+section[name="qanda"] > .main > .pane.night > h1{
+  color:#ddd;
+}
+
 section[name="qanda"] > .main > .pane > h2{
   font-size:12px;
   font-weight:400;
@@ -507,6 +572,10 @@ section[name="qanda"] > .main > .pane > h2{
   width:95%;
   margin-top:0px;
   margin-left:2.5%;
+}
+
+section[name="qanda"] > .main > .pane.night > h2{
+  color:#ddd;
 }
 
 section[name="qanda"] > .main form input{
@@ -569,6 +638,8 @@ section[name="qanda"] > .main form .settings b.chosen{
     border-color:#52AEFB;
     color:#52AEFB;
 }
+
+
 
 section[name="qanda"] > .main form .result{
   width:90%;
@@ -641,6 +712,20 @@ section[name="qanda"] > .main .recommendations > .submit + .submit{
   color:white;
   border:none;
 
+}
+
+section[name="qanda"] > .main .pane.night .submit{
+  border:2px white solid !important;
+  color:white !important;
+}
+
+section[name="qanda"] > .main .pane.night .submit + .submit{
+  background-color:white !important;
+  color:black !important;
+}
+
+section[name="qanda"] > .main .pane.night .similars > .recommendation{
+  color:white !important;
 }
 
 section[name="qanda"] > .main .answer form .result{
@@ -1118,6 +1203,27 @@ section[name="qanda"] > .main > .gobackbar{
   }
 }
 
+.kudos {
+    position: fixed;
+    height: 80px;
+    background-color: #52AEFB;
+    width: 25%;
+    left: 0px;
+    bottom: 0px;
+    z-index: 5;
+    display: inline-block;
+    color: white;
+    background-image:url('/kudos.png');
+    background-size:cover;
+    background-position: center;
+    padding: 24px;
+    padding-left: 0px;
+    padding-left: 2%;
+    padding-right: 20.3%;
+    text-align: center;
+    font-family: 'kumar one', lato;
+    font-size: 20px;
+}
 
 .admin {
   background-color:#FBF2C2 !important;
