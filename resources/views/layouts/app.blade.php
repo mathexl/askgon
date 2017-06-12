@@ -10,7 +10,7 @@
     <script src="/js/vue.js"></script>
     <link rel="stylesheet" href="/css/font-awesome.min.css">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Paperspade') }}</title>
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">

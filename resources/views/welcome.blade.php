@@ -282,6 +282,7 @@ encourages students to participate above and beyond through earning “kudos” 
     </div>
 
   </section>
+ <!--
   <section name="kudos">
       <div class="space" style="background-image:url('/robots.png')"></div>
       <div class="info">
@@ -292,6 +293,7 @@ encourages students to participate above and beyond through earning “kudos” 
 similar questions to your students, assist with posting, and other helpful tasks. </p>
       </div>
   </section>
+  -->
   <section name="getstarted">
     <h1>A smart digital forum just for your classroom</h1>
     <a href="/register">Get Started Today!</a>
